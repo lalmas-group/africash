@@ -1,19 +1,15 @@
 
-<br/><br/>
-<div class="row">
-	<div class="col-md-4 col-md-offset-2 col-sm-1">
-		<h3>Envoyez de l'argent en Guinée, beaucoup plus facile</h3>
+<br/>
+<div class="container">
+<div class="row" style="margin: 10px;">
+	<div class="col-md-7 col-lg-7">
+		<h3>Avec Africash, envoyez de l'argent en afrique en un click.</h3>
 
-		<br/><br/><br/>
-		<p>
-			Afro Money Express vous permet d'envoyer de l'argent en Afrique rapidement. En quelques clics, envoyer de l'argent à votre proche grâce
-			un virement bacaire ou paiement par carte bancaire. 
-
-			En quelques minutes ils reçoibvent l'argent en liquide ou en recharge sur leur portefeuille mobile.
-		</p>
+		<br/>
+		<img src="<?php echo base_url(); ?>vendor/images/pyNVUg5EM0j.png" alt="money send network image"/>
 	</div>
-	<div class="col-md-3 col-md-offset-1 col-sm-1" style="border: solid 1px; ">
-		<h4>Simulez votre transfert</h4>
+	<div class="col-md-4 col-md-offset-1 col-lg-4 col-lg-offset-1" style="border-radius: 5px 5px 5px 5px; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);">
+		<h3 style="text-align: center;">Simulez votre transfert</h3>
 		<br/>
 		<form method="" action="">
 			<label for="amount">Somme envoyée:</label><br/>
@@ -30,9 +26,10 @@
 			<input type="text" name="from" id="from" class="form-control input-lg " placeholder="Pays de"/>-->
 			<label for="to">Vers:</label><br/>
 			<input type="text" name="to" id="to" class="form-control input-lg " value="Guinée" disabled/>
+			<br/>
 			<label for="delivry_mode">Mode de livraison:</label><br/>
 			<input type="text" name="delivry_mode" id="delivry_mode" class="form-control input-lg " placeholder="Mode de livraison" disabled/>
-			<br/><br/>
+			<br/>
 			<hr/>	
 			<label for="amount_received">Somme reçue: </label><br/>
 			<div class="form-group">
@@ -45,14 +42,11 @@
     				</div>
   			</div>
 			<!--<input type="text" name="amount_received" id="amount_received" class="form-control input-lg " placeholder="0.00"/>-->
-			<label for="cost">Nos Frais: </label><br/>
-			<input type="text" name="cost" id="cost" class="form-control input-lg " disabled/>
-			<label for="exchange_rate">Taux de change: </label><br/>
-			<input type="text" name="exchange_rate" id="exchange_rate" class="form-control input-lg " disabled/><br/>
-
+			<p class="cost"></p>
 			<button style="float: center; " type="submit" class="btn btn-primary">Envoyez de l'argent</button>
 			<br/><br/>
 			
 		</form>
 	</div>
+</div>
 </div>

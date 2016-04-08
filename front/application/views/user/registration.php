@@ -1,71 +1,376 @@
-
 <br/><br/>
-<div class="row">
-	<div class="col-md-3 col-md-offset-4">
-		<form method="" action="">
+<div class="container">
+<div class="row" style="margin: 10px; ">
+	<div class="col-md-6 col-md-offset-1 col-lg-6 col-lg-offset-1">
+		<form method="post" action="<?php echo base_url(); ?>index.php/user/register">
 			<h3><b>Vos infos de connexion</b></h3>
-			<label for="email">Email:</label><br/>
-			<input class="form-control input-lg" type="text" placeholder="votre adresse email" name="email"/><br/>
+			<br/>
 
-			<label for="password">Mot de passe:</label><br/>
-			<input class="form-control input-lg" type="password"  name="password"/><br/>
 
-			<label for="password_conf">Email</label><br/>
-			<input class="form-control input-lg" type="password_conf" name="password_conf"/><br/>
+			<!-- Email -->
+			<?php if (!empty(form_error('email'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="email">Email:</label><br/>
+    					<input class="form-control input-lg" name="email" type="text" placeholder="Votre adresse email" value="<?php echo set_value('email');?>"/> 
+					<div class="control-label"><?php echo form_error('email');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('email')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="email">Email:</label><br/>
+						<input class="form-control input-lg " type="text" name="email" value="<?php echo set_value('email');?>"/>
+					</div>
+				<?php } else { ?>
+				<div class="form-group">
+					<label class="control-label" for="email">Email:</label><br/>
+					<input class="form-control input-lg" type="text" placeholder="votre adresse email" name="email" value="<?php echo set_value('email');?>"/>
+				</div>
+			<?php 	} 
+			}?>
+			<br/>
+			<!-- END Email -->
 
-			<br/><hr/>
+
+
+
+
+
+			<!-- password -->
+			<?php if (!empty(form_error('password'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="password">Mot de passe:</label><br/>
+					<input class="form-control input-lg" type="password"  name="password" />
+					<div class="control-label"><?php echo form_error('password');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('password')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="password">Mot de passe:</label><br/>
+						<input class="form-control input-lg" type="password"  name="password" />
+					</div>
+				<?php } else { ?>
+					<div class="form-group">				
+						<label class="control-label" for="password">Mot de passe:</label><br/>
+						<input class="form-control input-lg" type="password"  name="password" />
+					</div>
+			<?php 	} 
+			}?>
+		
+			<br/>	
+			<!-- End password -->
+
+
+
+
+
+
+			<!-- password conf -->
+			<?php if (!empty(form_error('password_conf'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label  class="control-label" for="password_conf">Confirmation de mot de passe</label><br/>
+					<input class="form-control input-lg" type="password" name="password_conf"/><br/>
+					<div class="control-label"><?php echo form_error('password_conf');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('password_conf')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="password_conf">Confirmation de mot de passe</label><br/>
+						<input class="form-control input-lg" type="password" name="password_conf"/><br/>
+					</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label class="control-label" for="password_conf">Confirmation de mot de passe</label><br/>
+						<input class="form-control input-lg" type="password" name="password_conf"/><br/>
+					</div>
+			<?php 	}
+			} ?> 
+			<br/>
+			<!-- END password conf -->
+			<hr/>
 
 
 			<h3><b>Vous</b></h3>
-			<label for="name">Nom</label>
-  				<input type="text" class="form-control input-lg" placeholder="Nom" aria-describedby="sizing-addon1">
+
 			<br/>
-			<label for="fistname">Prénom(s)</label>
-  				<input type="text" class="form-control input-lg" placeholder="Prénoms" aria-describedby="sizing-addon1">
+			
+
+
+
+
+
+
+			<!-- name -->
+			
+			<?php if (!empty(form_error('name'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="name">Nom</label>
+		  			<input type="text" class="form-control input-lg" placeholder="Votre nom" name="name" value="<?php echo set_value('name');?>"/>
+					<div class="control-label"><?php echo form_error('name');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('name')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="name">Nom</label>
+		  				<input type="text" class="form-control input-lg" placeholder="Votre nom" name="name" value="<?php echo set_value('name');?>"/>
+					</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label class="control-label" for="name">Nom</label>
+		  				<input type="text" class="form-control input-lg" placeholder="Votre nom" name="name" value="<?php echo set_value('name');?>"/>
+					</div>
+			<?php 	}
+			} ?> 
 			<br/>
-			<label for="birthday">Date de naissance</label>
-			<div class="controls form-inline">
-  				<input type="text" class="form-control input-lg" placeholder="JJ" size="2"> / 
-  				<input type="text" class="form-control input-lg" placeholder="MM" size="2"> / 
-  				<input type="text" class="form-control input-lg" placeholder="YYYY" size="4">
-			</div>
+			<!-- end name -->
+
+
+
+
+
+
+
+			<!-- firstname -->
+			<?php if (!empty(form_error('firstname'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="fistname">Prénom(s)</label>
+	  				<input type="text" class="form-control input-lg" placeholder="Prénoms" name="firstname" value="<?php echo set_value('firstname');?>"/>
+					<div class="control-label"><?php echo form_error('firstname');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('firstname')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="fistname">Prénom(s)</label>
+		  				<input type="text" class="form-control input-lg" placeholder="Prénoms" name="firstname" value="<?php echo set_value('firstname');?>"/>
+					</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label class="control-label" for="fistname">Prénom(s)</label>
+  						<input type="text" class="form-control input-lg" placeholder="Prénoms" name="firstname" value="<?php echo set_value('firstname');?>"/>
+					</div>
+			<?php 	}
+			} ?> 
+			<br/>
+			<!-- end firstname -->
+
 
 			<br/>
 			<hr/>
-			<h3><b>Votre adresse</b></h3>
-			<label for="country">Pays</label><br/>
-			<select class="form-control input-lg" style="width: 100%; ">
-				<option class="form-control input-lg">France</option><hr/>
-			</select><br/>
 
-			<label for="line1">Ligne 1</label><br/>
-  			<input type="text" class="form-control input-lg"   style="width: 100%; ">
-			<br/>
 
-			<label for="line2">Ligne 2</label><br/>
-  			<input type="text" class="form-control input-lg"  aria-describedby="sizing-addon1"  style="width: 100%; "><br/>
-			<label for="line1">Code postal</label><br/>
-  			<input type="text" class="form-control input-lg"  aria-describedby="sizing-addon1"   style="width: 100%; "><br/>
 
-			<label for="phone_number">Numéro de téléphone: </label><br/>
-			<div class="form-group">
-    				<div class="input-group">
-      					<div class="input-group-addon btn-primary" style="color: white; ">
-						0033
+
+
+			<h3><b>Vos coordonnées</b></h3><br/>
+
+
+
+
+			
+
+			
+			<!-- country -->
+			<?php if (!empty(form_error('country'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="country">Pays</label><br/>
+						<select class="form-control input-lg" style="width: 100%; " name="country">
+							<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+							<option class="form-control input-lg" value="1" <?php echo set_select('country', '1', TRUE); ?>>France</option><hr/>
+							<option class="form-control input-lg" value="2" <?php echo set_select('country', '2', TRUE); ?>>Belgique</option><hr/>
+						</select>
+					<div class="control-label"><?php echo form_error('country');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('country')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="country">Pays</label><br/>
+							<select class="form-control input-lg" style="width: 100%; " name="country">
+								<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+								<option class="form-control input-lg" value="1" <?php echo set_select('country', '1', TRUE); ?>>France</option><hr/>
+								<option class="form-control input-lg" value="2" <?php echo set_select('country', '2', TRUE); ?>>Belgique</option><hr/>
+							</select>
 					</div>
-      					<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" disabled>
-    				</div>
-  			</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label class="control-label" for="country">Pays</label><br/>
+							<select class="form-control input-lg" style="width: 100%; " name="country">
+								<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+								<option class="form-control input-lg" value="1" <?php echo set_select('country', '1', TRUE); ?>>France</option><hr/>
+								<option class="form-control input-lg" value="2" <?php echo set_select('country', '2', TRUE); ?>>Belgique</option><hr/>
+							</select>
+					</div>
+			<?php 	}
+			} ?> 
+			<br/>
+			<!-- end country-->
+
+			
+
+
+
+
+		
+
+			<!-- adress -->			
+			<?php if (!empty(form_error('address'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="address">Adresse: </label><br/>
+  					<input type="text" class="form-control input-lg"   style="width: 100%; " name="address" value="<?php echo set_value('address');?>">
+					<div class="control-label"><?php echo form_error('address');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('address')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="address">Adresse: </label><br/>
+			  			<input type="text" class="form-control input-lg"   style="width: 100%; " name="address" value="<?php echo set_value('address');?>">
+					</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label for="class="control-label" address">Adresse: </label><br/>
+						<input type="text" class="form-control input-lg"   style="width: 100%; " name="address" value="<?php echo set_value('address');?>">
+					</div>
+			<?php 	}
+			} ?> 
+			<br/>
+			<!-- end address -->
+
+
+
+
+
+
+			
+			<!-- ville -->
+			<?php if (!empty(form_error('town'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="line1">Ville : </label><br/>
+						<select class="form-control input-lg" style="width: 100%; " name="town">
+							<option class="form-control input-lg" value="" <?php echo set_select('town', '', TRUE); ?>>Choisissez une ville</option><hr/>
+							<option class="form-control input-lg" value="1" <?php echo set_select('town', '1', TRUE); ?>>Lille</option><hr/>
+							<option class="form-control input-lg" value="2" <?php echo set_select('town', '2', TRUE); ?>>Paris</option><hr/>
+						</select>
+<!--  					<input type="text" class="form-control input-lg"  aria-describedby="sizing-addon1"   style="width: 100%; " name="town" value="<?php echo set_value('town');?>"/>-->
+					<div class="control-label"><?php echo form_error('town');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('town')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>	
+					<div class="form-group has-success">
+						<label class="control-label" for="line1">Ville : </label><br/>
+						<select class="form-control input-lg" style="width: 100%; " name="town">
+							<option class="form-control input-lg" value="" <?php echo set_select('town', '', TRUE); ?>>Choisissez une ville</option><hr/>
+							<option class="form-control input-lg" value="1" <?php echo set_select('town', '1', TRUE); ?>>Lille</option><hr/>
+							<option class="form-control input-lg" value="2" <?php echo set_select('town', '2', TRUE); ?>>Paris</option><hr/>
+						</select>
+					</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label class="control-label" for="line1">Ville : </label><br/>
+						<select class="form-control input-lg" style="width: 100%; " name="town">
+							<option class="form-control input-lg" value="" <?php echo set_select('town', '', TRUE); ?>>Choisissez une ville</option><hr/>
+							<option class="form-control input-lg" value="1" <?php echo set_select('town', '1', TRUE); ?>>Lille</option><hr/>
+							<option class="form-control input-lg" value="2" <?php echo set_select('town', '2', TRUE); ?>>Paris</option><hr/>
+						</select>
+					</div>
+			<?php 	}
+			} ?> 
+			<br/>
+			<!-- end ville -->
+
+
+
+
+
+
+			<!-- phone -->
+			<?php if (!empty(form_error('phone_number'))) { 
+				/* L'adresse email est mal rempli */
+			?>
+			
+				<div class="form-group has-error">
+					<label class="control-label" for="phone_number">Numéro de téléphone: </label><br/>
+	    				<div class="input-group">
+      						<div class="input-group-addon btn-primary" style="color: white; ">
+							0033
+						</div>
+      						<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" value="<?php echo set_value('phone_number');?>">
+					</div>
+					<div class="control-label"><?php echo form_error('phone_number');?></div>
+  				</div>
+			<?php } else { ?>
+				<?php if ( !empty(validation_errors()) && empty(form_error('phone_number')) ) { 
+					/* Erreur dans le formulaire mais pas ici */	
+				?>
+					<div class="form-group has-success">
+						<label class="control-label" for="phone_number">Numéro de téléphone: </label><br/>
+						<div class="input-group">
+      							<div class="input-group-addon btn-primary" style="color: white; ">
+								0033
+							</div>
+		      					<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" value="<?php echo set_value('phone_number');?>">
+    						</div>
+					</div>
+				<?php } else { ?>
+					<div class="form-group">
+						<label class="control-label" for="phone_number">Numéro de téléphone: </label><br/>
+    						<div class="input-group">
+	      						<div class="input-group-addon btn-primary" style="color: white; ">
+								0033
+							</div>
+	      					<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" value="<?php echo set_value('phone_number');?>">
+    						</div>
+					</div>
+			<?php 	}
+			} ?>
 
 			
 			<br/><br/><br/>
 
 			<button type="submit" class="btn btn-primary" style="width: 100%; ">Créer un compte</button>
 			<br/><br/><br/></br>
-			<p>En cliquanr sur "Créer un compte" vous acceptez les <a href="">Conditions Générales</a> d'Africa$h et sa 
+			<p style="font-family: Helvetica Neue,Helvetica,Arial,sans-serif;">En cliquanr sur "Créer un compte" vous acceptez les <a href="">Conditions Générales</a> d'Africa$h et sa 
 				<a href="">Politique de Confidentialité</a></p>
 
 			<br/><br/><br/>
 		</form>
 	</div>
+</div>
 </div>

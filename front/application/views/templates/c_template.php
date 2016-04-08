@@ -5,7 +5,7 @@
 	    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	    	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-   		 <title><?php echo $title; ?></title>
+   		 <title><?php echo $title ?></title>
 
 	    	<!-- Bootstrap -->
     		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" 
@@ -56,34 +56,22 @@
 								</button>
 							</a>				
 						</li>
-		 			        <li class="">
-							<a href="<?php echo base_url(); ?>index.php/user/registration/" >
-								<button class="btn btn-success">
-									S'inscrire
-								</button>
-							</a>				
-						</li>
-		 			        <li class="">
-							<a href="<?php echo base_url(); ?>index.php/user/" >
-								Se connecter
-							</a>				
-						</li>
+				        	<ul class="nav navbar-nav navbar-right col-sm-offset-2">
+        						<li class="dropdown">
+	          						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
+								aria-expanded="false">
+									Moncompte
+								</a>
+          							<ul class="dropdown-menu" role="menu">
+            								<li><a href="#">Action</a></li>
+            								<li><a href="#">Another action</a></li>
+            								<li><a href="#">Something else here</a></li>
+            								<li class="divider"></li>
+	            							<li><a href="<?php echo base_url(); ?>index.php/user/deconnexion/">Deconnexion</a></li>
+        	  						</ul>
+       							 </li>
+      						</ul>
 					</ul>
-				        <!--<ul class="nav navbar-nav navbar-right col-sm-offset-2">
-        					<li class="dropdown">
-          						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
-							aria-expanded="false">
-								My account
-							</a>
-          						<ul class="dropdown-menu" role="menu">
-            							<li><a href="#">Action</a></li>
-            							<li><a href="#">Another action</a></li>
-            							<li><a href="#">Something else here</a></li>
-            							<li class="divider"></li>
-            							<li><a href="#">Separated link</a></li>
-          						</ul>
-       						 </li>
-      					</ul>-->
 				</div><!-- /.nav-collapse -->
   			</nav>
 		</div>
