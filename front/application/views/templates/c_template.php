@@ -5,7 +5,7 @@
 	    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	    	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-   		 <title><?php echo $title ?></title>
+   		 <title><?php echo $title ?> Votre compte</title>
 
 	    	<!-- Bootstrap -->
     		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" 
@@ -13,6 +13,13 @@
 	
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" 
 		integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		 <link href="<?php echo base_url() ; ?>vendor/gentelella/production/fonts/css/font-awesome.min.css" rel="stylesheet">
+		  <link href="<?php echo base_url() ; ?>vendor/gentelella/production/css/animate.min.css" rel="stylesheet">
+
+		  <!-- Custom styling plus plugins -->
+		  <link href="<?php echo base_url() ; ?>vendor/gentelella/production/css/icheck/flat/green.css" rel="stylesheet">
+		  <link href="<?php echo base_url() ; ?>vendor/gentelella/production/css/datatables/tools/css/dataTables.tableTools.css" rel="stylesheet">
+
 	    	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	    	<!--[if lt IE 9]>

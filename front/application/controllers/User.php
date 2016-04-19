@@ -53,6 +53,7 @@ class User extends CI_Controller {
 			$content  = $this->load->view('user/c_home.php', $data , TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
+				'title'		=>	"Africash -- "
 			); 
 			$this->load->view('templates/c_template.php', $data); 
 			return; 
@@ -159,7 +160,7 @@ class User extends CI_Controller {
 				'name'		=>	$name, 
 				'firstname'	=>	$firstname, 
 				'address'	=>	$address, 
-				'town'		=>	$town, 				
+				'country'		=>	$country, 				
 				'phone_number'	=>	$phone_number
 			); 
 			if ( $this->user_model->create_user($data) == 0 ) 
@@ -258,10 +259,409 @@ class User extends CI_Controller {
                 $this->session->set_userdata('first_name', $customer->first_name);
                 $this->session->set_userdata('email', $customer->email);
                 $this->session->set_userdata('adress', $customer->address);
-                $this->session->set_userdata('category', $customer->password);
-                $this->session->set_userdata('category', $customer->town);
-                $this->session->set_userdata('category', $customer->phone_number);
+                $this->session->set_userdata('pasword', $customer->password);
+                $this->session->set_userdata('country', $customer->country);
+                $this->session->set_userdata('phone_number', $customer->phone_number);
         }
+
+	public function transfert($onglet=null, $recipient=null)
+	{
+		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
+		{
+			redirect ('/', 'location'); 
+		}
+		else {
+			if ($onglet == "recipient" ) {
+				$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
+				$content  = $this->load->view('user/c_transfert_recipient_choose.php', array ('status'	=> '', 'recipients' => $recipients, $recipient => $recipient), TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- "
+				); 
+				$this->load->view('templates/c_template.php', $data); 
+				return;
+			}
+			else if ($onglet == "new" ) {
+				$content  = $this->load->view('user/c_transfert_create.php', array ('status'	=> '', 'recipient' => $recipient), TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- "
+				); 
+				$this->load->view('templates/c_template.php', $data); 
+				return;
+			}
+			if ($onglet == "paiement" ) {
+				$this->load->library('form_validation');
+				$this->load->helper('security');
+
+				$recipient = xss_clean($this->input->post('recipient'));
+				$amount		=	xss_clean($this->input->post('amount', TRUE));
+				$paiement_mean	=	xss_clean($this->input->post('paiement_means', TRUE));
+
+				$this->form_validation->set_rules('amount', 'Le montant du transfert ', 
+					'trim|required|numeric',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+						'numeric'		=>	'%s doit contenir que des chiffres.',				      
+				));
+				$this->form_validation->set_rules('paiement_means', 'Le moyen de paiement ', 
+					'trim|required|numeric',
+					array('required'	=>	'Vous devez choisir un moyen de paiement.',				      
+				));
+				if ($this->form_validation->run() == FALSE)
+				{
+					$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
+					$content  = $this->load->view('user/c_transfert_create.php', array ('status'	=> '', 'recipients' => $recipients), TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- "
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return; 
+				}
+				if ( $paiement_mean == 1 ) // PAIEMENT PAR CARTE
+				{
+					$cont = "user/c_card_paiement"; 
+				}
+				if ( $paiement_mean == 2 ) // VRIEMENT
+				{
+					$cont = "user/c_transfert_paiement"; 
+				}
+				if ( $paiement_mean == 3 ) 
+				{
+					$cont = "user/c_paypal_paiement"; 
+				}
+				$reference		=	uniqid();	
+				// Création du transfert
+				$recipient_object	=	$this->user_model->get_recipient($recipient);
+				$data	=	array (
+					'customer'		=>	$this->session->userdata('user'),
+					'recipient'		=>	$recipient,
+					'amount'		=>	$amount,
+					'transfert_currency'	=>	$this->country_model->get_country_currency($this->session->userdata('country')),
+					'receive_currency'	=>	$this->country_model->get_country_currency($recipient_object->country),
+					'paiement_mean'		=>	$paiement_mean,
+					'reference'		=>	$reference,
+					'state'			=>	"WAIT_PAIEMENT"
+				);
+
+				if ( $this->user_model->create_transfert($data) == 0 ) 
+				{
+					$transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
+					$content  = $this->load->view($cont, array ('status'    => 'error', 'reference' => $reference, 'recipient' => $recipient_object), TRUE);					
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- "
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return; 
+				}
+				else
+				{
+					$content  = $this->load->view($cont, array ('status'    => 'success', 'reference' => $reference, 'recipient' => $recipient_object), TRUE);					
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- "
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return; 
+				}					
+			}
+			else {
+				$transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
+				$content  = $this->load->view('user/c_transferts.php', array ('status'	=> '', 'transferts' => $transferts), TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- "
+				); 
+				$this->load->view('templates/c_template.php', $data); 
+				
+			}
+		}
+	
+	}
+
+
+
+
+
+	public function recipient($onglet = null, $recipient = null, $action = null)
+	{
+		/** Aucune session n'existe */
+		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
+		{
+			
+			redirect('/', 'location'); 
+		}else
+		{
+			/* Traitement du formulaire*/
+			if ( $onglet == "create" ) 
+			{ 
+				$this->load->library('form_validation');
+				$this->load->helper('security');
+
+
+				$this->form_validation->set_rules('name', 'Le nom de famille', 'trim|required|min_length[2]',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+					'min_length'		=>	'%s doit contenir au moins %s caractères.'
+				));	
+				$this->form_validation->set_rules('firstname', 'Le prénom', 'trim|required|min_length[2]',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+					'min_length'		=>	'%s doit contenir au moins %s caractères.'
+				));
+				$this->form_validation->set_rules('country', 'Le pays d\'adresse', 'trim|required',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+					'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
+				));	
+/*				$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+				));	*/
+				$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
+					'trim|required|numeric|callback_validate_phone_number_recipient',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+					'numeric'		=>	'%s doit contenir que des chiffres.',				      
+					'validate_phone_number_recipient'		=>	'%s est déjà utilisé.',
+				));
+				if ($this->form_validation->run() == FALSE)
+				{	
+					$data 	  = array(
+						'error'	=>	"",
+					); 
+					// Formulaire mal rempli
+					$content  = $this->load->view('user/c_recipient_create.php', $data, TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Inscrivez vous!"
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+				}
+				else {
+					// Formulaire bien rempli
+
+					$name		=	xss_clean($this->input->post('name', TRUE));
+					$firstname	=	xss_clean($this->input->post('firstname', TRUE));
+
+					$country	=	xss_clean($this->input->post('country', TRUE));
+					$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
+
+
+					
+					$data 	=	array (
+						'customer'	=>	$this->session->userdata('user'),
+						'name'		=>	$name, 
+						'firstname'	=>	$firstname, 
+						'country'		=>	$country, 				
+						'phone_number'	=>	$phone_number
+					); 
+					//  création du recipient
+					if ( $this->user_model->create_recipient($data) == 0 ) 
+					{
+						// On ne peut pas créer le recipient, numéro déjà utilisé pour un autre recipient, ou transaction annulé
+						$data 	  = array(
+							'status'	=>	"error",
+						); 
+						$content  = $this->load->view('user/recipient_create_confirm.php', $data , TRUE);
+						$data 	  = array(
+							'content'	=>	$content,
+							'title'		=>	"Africash -- Confirmation de création de votre destinataire."
+						); 
+						$this->load->view('templates/c_template.php', $data); 
+						return;															
+					}	
+					else	
+					{
+						// Le recipient a bien été enregistré
+						$data 	  = array(
+							'status'	=>	"success",
+						); 
+						$content  = $this->load->view('user/recipient_create_confirm.php', $data , TRUE);
+						$data 	  = array(
+							'content'	=>	$content,
+							'title'		=>	"Africash -- Confirmation de création de votre destinataire."
+						); 
+						$this->load->view('templates/c_template.php', $data); 
+						return;
+					}					
+				}
+			}			
+			else if ( $onglet == "update" ) 
+			{
+				if ( $action == null )
+				{
+					$recipient_object	=	$this->user_model->get_recipient($recipient); 
+					$data 	  = array(
+						'error'	=>	"",
+						'recipient'	=>	$recipient_object
+					); 
+					$content  = $this->load->view('user/c_recipient_update.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- ."
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return;
+					
+				}
+				else if ( $action == "update" )
+				{
+					$this->load->library('form_validation');
+					$this->load->helper('security');
+	
+	
+					$this->form_validation->set_rules('name', 'Le nom de famille', 'trim|required|min_length[2]',
+						array('required'	=>	'%s ne peut pas être vide.',				      
+						'min_length'		=>	'%s doit contenir au moins %s caractères.'
+					));	
+					$this->form_validation->set_rules('firstname', 'Le prénom', 'trim|required|min_length[2]',
+						array('required'	=>	'%s ne peut pas être vide.',				      
+						'min_length'		=>	'%s doit contenir au moins %s caractères.'
+					));
+					$this->form_validation->set_rules('country', 'Le pays d\'adresse', 'trim|required',
+						array('required'	=>	'%s ne peut pas être vide.',				      
+						'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
+					));	
+/*					$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
+						array('required'	=>	'%s ne peut pas être vide.',				      
+					));	*/
+					$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
+						'trim|required|numeric',
+						array('required'	=>	'%s ne peut pas être vide.',				      
+						'numeric'		=>	'%s doit contenir que des chiffres.',				      
+					));
+					$recipient_object	=	$this->user_model->get_recipient($recipient); 
+					if ($this->form_validation->run() == FALSE)
+					{	
+						$data 	  = array(
+							'error'	=>	"",
+							'recipient'	=>	$recipient_object
+						); 
+						// Formulaire mal rempli
+						$content  = $this->load->view('user/c_recipient_update.php', $data, TRUE);
+						$data 	  = array(
+							'content'	=>	$content,
+							'title'		=>	"Africash -- Vos bénéficiaires"
+						); 
+						$this->load->view('templates/c_template.php', $data); 
+						return; 
+					}
+					else
+					{
+	
+						$name		=	xss_clean($this->input->post('name', TRUE));
+						$firstname	=	xss_clean($this->input->post('firstname', TRUE));
+	
+						$country	=	xss_clean($this->input->post('country', TRUE));
+						$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
+						
+						if ( $recipient_object->name == $name && $recipient_object->firstname == $firstname && $recipient_object->country == $country && $recipient_object->phone_number == $phone_number ) 
+						{
+							$data 	  = array(
+								'error'	=>	"update_error",
+								'recipient'	=>	$recipient_object
+							); 
+							// Formulaire mal rempli
+							$content  = $this->load->view('user/c_recipient_update.php', $data, TRUE);
+							$data 	  = array(
+								'content'	=>	$content,
+								'title'		=>	"Africash -- Vos bénéficiaires"
+							); 
+							$this->load->view('templates/c_template.php', $data); 							
+							return; 
+						}
+						else
+						{
+							if ( $recipient_object->phone_number != $phone_number && ($this->validate_phone_number_recipient($phone_number) == TRUE))
+							{
+								$recipient	=	$this->user_model->get_recipient($recipient); 
+								$data 	  = array(
+									'error'	=>	"phone_already_use",
+									'recipient'	=>	$recipient
+								); 
+								// Formulaire mal rempli
+								$content  = $this->load->view('user/c_recipient_update.php', $data, TRUE);
+								$data 	  = array(
+									'content'	=>	$content,
+									'title'		=>	"Africash -- Vos bénéficiaires"
+								); 
+								$this->load->view('templates/c_template.php', $data); 							
+								return; 
+							}
+							else
+							{
+								if ( $this->user_model->update_user_recipient($this->session->userdata('user'), $recipient, $name, $firstname, $country, $phone_number) == 1) 
+								{	
+									$data 	  = array(
+										'status'	=>	"success",
+									); 
+									$content  = $this->load->view('user/recipient_update_confirm.php', $data , TRUE);
+									$data 	  = array(
+										'content'	=>	$content,
+										'title'		=>	"Africash -- Confirmation d'inscription"
+									); 
+									$this->load->view('templates/c_template.php', $data); 
+									return;
+								}else
+								{
+									$data 	  = array(
+										'status'	=>	"error",
+									); 
+									$content  = $this->load->view('user/recipient_update_confirm.php', $data , TRUE);
+									$data 	  = array(
+										'content'	=>	$content,
+										'title'		=>	"Africash -- Confirmation d'inscription"
+									); 
+									$this->load->view('templates/c_template.php', $data); 
+									return;
+								}
+								
+							}
+						}
+					}
+				}
+			}
+			else if ($onglet == "delete" )
+			{
+				if ( $this->user_model->delete_user_recipient($recipient, $this->session->userdata('user')) )
+				{	
+					$data 	  = array(
+						'status'	=>	"success",
+					); 
+					$content  = $this->load->view('user/recipient_delete_confirm.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Confirmation d'inscription"
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return;
+				}else
+				{
+					$data 	  = array(
+						'status'	=>	"error",
+					); 
+					$content  = $this->load->view('user/recipient_delete_confirm.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Confirmation d'inscription"
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return;
+				}
+		
+			}
+			else
+			{
+				$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
+				$content  = $this->load->view('user/c_recipients.php', array ('status'	=> '', 'recipients' => $recipients), TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- "
+				); 
+				$this->load->view('templates/c_template.php', $data); 
+				
+			}
+		}
+	}
+
+
 
 	/*
 		Validation du numéro de téléphone. Un seul numéro par pays. 
@@ -269,6 +669,17 @@ class User extends CI_Controller {
 	public function validate_phone_number($number)
 	{
 		if ( $this->user_model->phone_number_already_user($number, $this->input->post('town')))
+		{
+			return FALSE; 
+		}else
+		{
+			return TRUE; 
+		}
+	}
+	
+	public function validate_phone_number_recipient($number)
+	{
+		if ( $this->user_model->recipient_exists($this->session->userdata('user'), $number, $this->input->post('country')))
 		{
 			return FALSE; 
 		}else
