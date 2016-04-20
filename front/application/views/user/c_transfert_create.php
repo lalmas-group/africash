@@ -20,7 +20,7 @@
 				Saisissez le montant que vous voulez envoyer à votre destinataire, les frais que vous nous paierez 
 				et la somme reçue par votre destinataire seront calculés automatiquement. 
 			</p>
-			<form method="post" action="<?php echo base_url(); ?>index.php/user/transfert/paiement/" style="margin: 10px;">
+			<form method="post" action="<?php echo base_url(); ?>index.php/user/transfert/create/" style="margin: 10px;">
 			<?php if (!empty(form_error('amount'))) { 
 				/* L'adresse email est mal rempli */
 			?>
@@ -48,7 +48,7 @@
       							<div class="input-group-addon btn-primary" style="color: white; ">
 								EUR
 							</div>
-		      					<input type="text" class="form-control input-lg" id=amount" name="amount" placeholder="650535637" value="<?php echo set_value('amount');?>">
+		      					<input type="text" class="form-control input-lg" id=amount" name="amount" value="<?php echo set_value('amount');?>">
       							<div class="input-group-addon btn-primary" style="color: white; ">
 								.00
 							</div>

@@ -161,4 +161,14 @@ class User_model extends CI_Model
 		$query = $this->db->query($query); 
 		return $query->result(); 
 	}
+
+
+	public function get_transfert_id_by_reference($reference)
+	{
+		$query		=	"select id from transfert where transfert.reference = '$reference';";
+		$query = $this->db->query($query); 
+		$query = $query->result(); 
+		$query = $query[0]; 
+		return $query->id; 
+	}
 }

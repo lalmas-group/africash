@@ -2,3 +2,13 @@
 
 
 # Ici branch dev
+
+# Installer un poste: 
+
+Une fois cloner le dépôt, il vous manques des répertoires pour que le site marche
+
+Le ZIp sera sur un disque dur et fourni, en attendant téléchargez depuisun autre repo
+
+1 - le repertoire system/
+2 - le repertoire application/conffig/
+3 - le repertoire vendor/

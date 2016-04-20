@@ -264,6 +264,82 @@ class User extends CI_Controller {
                 $this->session->set_userdata('phone_number', $customer->phone_number);
         }
 
+
+
+	public function card_paiement($id)
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('security');
+		$name		=	xss_clean($this->input->post('name', TRUE));
+		$card_number	=	xss_clean($this->input->post('card_number', TRUE));
+		$expiration_date=	xss_clean($this->input->post('expiration_date', TRUE));
+		$ccv		=	xss_clean($this->input->post('ccv', TRUE));
+		$this->form_validation->set_rules('name', 'Le nom du titulaire de la carte ', 
+			'trim|required',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+		));
+		$this->form_validation->set_rules('card_number', 'Le moyen de paiement ', 
+			'trim|required|numeric|min_length[16]|max_length[16]',
+			array(	'required'	=>	'Vous devez renseigner votre numéro de carte bleu.',				      
+				'numeric'	=>	'%s doit contenir que des chiffres.',				      
+				'min_length'	=>	'Il manque des caractères dns le numéro de carte.',				      
+				'max_length'	=>	'Le numéro de carte contient des caractères en plus.',				      
+			));
+		$this->form_validation->set_rules('expiration_date', 'La date d\'expiration ', 
+#		'trim|required|min_length[5]|max_length[5]|regex_match[/0[1-9]|1[1-2][1-9][1-9]/]',
+		'trim|required|min_length[5]|max_length[5]|regex_match[regex_match[/^((0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/]',
+		array(	'required'	=>	'Vous devez renseigner la date d\'expiration votre numéro de carte bleu.',
+				'min_length'	=>	'%s doit être dans le format mm/aa.',				      
+				'max_length'	=>	'%s doit être dans le format mm/aa.',				      
+				'regex_match'	=>	'%s doit être dans le format mm/aa.',				      
+		));
+		$this->form_validation->set_rules('ccv', 'Le code au dos de votre carte ', 
+			'trim|required|numeric|min_length[3]|max_length[3]',
+		array(	'required'	=>	'%s ne peut pas être vide.',				      
+			'numeric'	=>	'%s doit contenir que des chiffres.',				      
+			'min_length'	=>	'%s doit contenir 3 chiffres.',				      
+			'max_length'	=>	'Le doit contenir 3 chiffres..',				      
+		));
+		if ($this->form_validation->run() == FALSE)
+		{
+			$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
+			$content  = $this->load->view('user/c_card_paiement.php', array ('status'	=> '', 'id' => $id), TRUE);
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- "
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+			return; 
+		}
+	}
+
+	public function paiement($type, $reference)
+	{
+		if ( $type == "bank_transfer" )
+		{
+			$id	  = $this->user_model->get_transfert_id_by_reference($reference); 
+			$content  = $this->load->view('user/c_transfert_paiement.php', 
+				array ('status'    => 'success', 'reference' => $reference), TRUE);		
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- "
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+			return; 
+		}
+		if ( $type == "bank_card" )
+		{
+			$id	  = $this->user_model->get_transfert_id_by_reference($reference); 
+			$content  = $this->load->view('user/c_card_paiement.php', 
+				array ('status'    => 'success', 'reference' => $reference, 'id' => $id), TRUE);		
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- "
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+			return; 
+		}
+	}
 	public function transfert($onglet=null, $recipient=null)
 	{
 		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
@@ -273,7 +349,8 @@ class User extends CI_Controller {
 		else {
 			if ($onglet == "recipient" ) {
 				$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
-				$content  = $this->load->view('user/c_transfert_recipient_choose.php', array ('status'	=> '', 'recipients' => $recipients, $recipient => $recipient), TRUE);
+				$content  = $this->load->view('user/c_transfert_recipient_choose.php', 
+					array ('status'	=> '', 'recipients' => $recipients, $recipient => $recipient), TRUE);
 				$data 	  = array(
 					'content'	=>	$content,
 					'title'		=>	"Africash -- "
@@ -282,7 +359,8 @@ class User extends CI_Controller {
 				return;
 			}
 			else if ($onglet == "new" ) {
-				$content  = $this->load->view('user/c_transfert_create.php', array ('status'	=> '', 'recipient' => $recipient), TRUE);
+				$content  = $this->load->view('user/c_transfert_create.php', 
+					array ('status'	=> '', 'recipient' => $recipient), TRUE);
 				$data 	  = array(
 					'content'	=>	$content,
 					'title'		=>	"Africash -- "
@@ -290,7 +368,7 @@ class User extends CI_Controller {
 				$this->load->view('templates/c_template.php', $data); 
 				return;
 			}
-			if ($onglet == "paiement" ) {
+			if ($onglet == "create" ) {
 				$this->load->library('form_validation');
 				$this->load->helper('security');
 
@@ -320,15 +398,15 @@ class User extends CI_Controller {
 				}
 				if ( $paiement_mean == 1 ) // PAIEMENT PAR CARTE
 				{
-					$cont = "user/c_card_paiement"; 
+					$cont = "bank_card"; 
 				}
 				if ( $paiement_mean == 2 ) // VRIEMENT
 				{
-					$cont = "user/c_transfert_paiement"; 
+					$cont = "bank_transfer"; 
 				}
 				if ( $paiement_mean == 3 ) 
 				{
-					$cont = "user/c_paypal_paiement"; 
+					$cont = "paypal"; 
 				}
 				$reference		=	uniqid();	
 				// Création du transfert
@@ -357,13 +435,8 @@ class User extends CI_Controller {
 				}
 				else
 				{
-					$content  = $this->load->view($cont, array ('status'    => 'success', 'reference' => $reference, 'recipient' => $recipient_object), TRUE);					
-					$data 	  = array(
-						'content'	=>	$content,
-						'title'		=>	"Africash -- "
-					); 
-					$this->load->view('templates/c_template.php', $data); 
-					return; 
+					//$ref	  = $this->user_model->get_transfert_id_by_reference($reference); 
+					redirect("user/paiement/$cont/$reference", 'location');
 				}					
 			}
 			else {
@@ -687,6 +760,8 @@ class User extends CI_Controller {
 			return TRUE; 
 		}
 	}
+	
+
 
 	public function deconnexion()
 	{
