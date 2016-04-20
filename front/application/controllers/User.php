@@ -287,11 +287,11 @@ class User extends CI_Controller {
 			));
 		$this->form_validation->set_rules('expiration_date', 'La date d\'expiration ', 
 #		'trim|required|min_length[5]|max_length[5]|regex_match[/0[1-9]|1[1-2][1-9][1-9]/]',
-		'trim|required|min_length[5]|max_length[5]|regex_match[regex_match[/^((0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/]',
+		'trim|required|min_length[5]|max_length[5]|callback_validate_card_expiration_date',
 		array(	'required'	=>	'Vous devez renseigner la date d\'expiration votre numéro de carte bleu.',
 				'min_length'	=>	'%s doit être dans le format mm/aa.',				      
 				'max_length'	=>	'%s doit être dans le format mm/aa.',				      
-				'regex_match'	=>	'%s doit être dans le format mm/aa.',				      
+				'validate_card_expiration_date'	=>	'%s doit être dans le format mm/aa.',				      
 		));
 		$this->form_validation->set_rules('ccv', 'Le code au dos de votre carte ', 
 			'trim|required|numeric|min_length[3]|max_length[3]',
@@ -625,7 +625,8 @@ class User extends CI_Controller {
 						$country	=	xss_clean($this->input->post('country', TRUE));
 						$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
 						
-						if ( $recipient_object->name == $name && $recipient_object->firstname == $firstname && $recipient_object->country == $country && $recipient_object->phone_number == $phone_number ) 
+						if ( $recipient_object->name == $name && $recipient_object->firstname == $firstname && 
+						$recipient_object->country == $country && $recipient_object->phone_number == $phone_number ) 
 						{
 							$data 	  = array(
 								'error'	=>	"update_error",
@@ -759,6 +760,29 @@ class User extends CI_Controller {
 		{
 			return TRUE; 
 		}
+	}
+
+	public function validate_card_expiration_date($date)
+	{
+		$date_tab	=	explode('/', $date); 
+		$month = date('m'); 
+		$year  = substr(date('Y'), 2, 3);
+		if ( $date_tab[0] == null || $date_tab[1] == null) {
+			return FALSE; 
+		}
+		if ( intval($date_tab[0]) == 0 ){
+			return FALSE; 
+		}
+		else
+		{
+			if ( intval($date_tab[0]) < 1 || intval($date_tab[0]) > 12 || ($date_tab[1] == $year && $date_tab[0] < $month))
+			{
+				return FALSE; 
+			}
+		}		
+		if ( intval($year) > intval($date_tab[1]) )
+			return FALSE; 
+		return TRUE; 	
 	}
 	
 
