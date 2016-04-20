@@ -642,7 +642,7 @@ class User extends CI_Controller {
 						}
 						else
 						{
-							if ( $recipient_object->phone_number == $phone_number || ($this->validate_phone_number_recipient($phone_number, $country) == FALSE))
+							if ( ($recipient_object->phone_number == $phone_number && $recipient_object->country == $country) || ($this->validate_phone_number_recipient($phone_number, $country) == FALSE))
 							{
 								$recipient	=	$this->user_model->get_recipient($recipient); 
 								$data 	  = array(
