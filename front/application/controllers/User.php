@@ -642,7 +642,7 @@ class User extends CI_Controller {
 						}
 						else
 						{
-							if ( $recipient_object->phone_number != $phone_number && ($this->validate_phone_number_recipient($phone_number) == TRUE))
+							if ( $recipient_object->phone_number == $phone_number || ($this->validate_phone_number_recipient($phone_number, $country) == FALSE))
 							{
 								$recipient	=	$this->user_model->get_recipient($recipient); 
 								$data 	  = array(
@@ -750,9 +750,9 @@ class User extends CI_Controller {
 		}
 	}
 	
-	public function validate_phone_number_recipient($number)
+	public function validate_phone_number_recipient($number, $country)
 	{
-		if ( $this->user_model->recipient_exists($this->session->userdata('user'), $number, $this->input->post('country')))
+		if ( $this->user_model->recipient_exists($this->session->userdata('user'), $number, $country))
 		{
 			return FALSE; 
 		}else
