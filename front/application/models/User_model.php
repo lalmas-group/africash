@@ -157,7 +157,22 @@ class User_model extends CI_Model
 
 	public function get_user_transferts($id)
 	{
-		$query		=	"select * from transfert where transfert.customer = '$id';";
+		$query		=	"select * from transfert where transfert.customer = '$id' order by creation_date asc;";
+		$query = $this->db->query($query); 
+		return $query->result(); 
+	}
+
+	public function get_user_nb_transferts($user, $offset, $number)
+	{
+		$query		=	"select * from transfert where transfert.customer = '$user' order by creation_date desc limit $number offset $offset;";
+		$query = $this->db->query($query); 
+		return $query->result(); 
+	}
+
+
+	public function get_user_nb_recipients($user, $offset, $number)
+	{
+		$query		=	"select * from recipient where customer = '$user' limit $number offset $offset;";
 		$query = $this->db->query($query); 
 		return $query->result(); 
 	}
@@ -170,5 +185,23 @@ class User_model extends CI_Model
 		$query = $query->result(); 
 		$query = $query[0]; 
 		return $query->id; 
+	}
+	
+
+	public function get_transfert_by_reference($reference)
+	{
+		$query		=	"select * from transfert where transfert.reference = '$reference';";
+		$query = $this->db->query($query); 
+		$query = $query->result(); 
+		$query = $query[0]; 
+		return $query; 
+	}
+	public function get_transfert_recipient_by_reference($reference)
+	{
+		$query		=	"select * from transfert, recipient where transfert.reference = '$reference' and transfert.recipient = recipient.id ;";
+		$query = $this->db->query($query); 
+		$query = $query->result(); 
+		$query = $query[0]; 
+		return $query; 
 	}
 }

@@ -8,6 +8,7 @@
 			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
 		</ul>
 	</div>
+	<br/><br/>
 	<div class="row" style="margin: 10px;">
 		<div class="col-md-offset-1 col-md-10">
 			<?php if ( $status == "success" ) { ?>
@@ -15,7 +16,7 @@
 				<h3><b>Mon compte</b></h3>
 				<hr/><br/>
 				
-				<p style="text-color: green; margin: 10px;">Votre destinataire a bien été crée.</p>
+				<p style="color: green; margin: 10px;">Votre destinataire a bien été crée.</p>
 
 				<br/><br/>
 				<div class="row" style="margin: 10px;">
@@ -28,10 +29,10 @@
 				<h3><b>Mon compte</b></h3>
 				<hr/><br/>
 				
-				<p style="text-color: red/;">Votre destinataire n'a malheureusement pas été crée. Veuillez réessayer plus tard.</p>
+				<p style="color: red/;">Votre destinataire n'a malheureusement pas été crée. Veuillez réessayer plus tard.</p>
 				
 
-				<p style="text-color: red/;">Nous vous présentons nos sincères excuses pour se désagrément.</p>
+				<p style="color: red/;">Nous vous présentons nos sincères excuses pour se désagrément.</p>
 				
 				
 

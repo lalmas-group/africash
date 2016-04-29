@@ -24,6 +24,10 @@ class Welcome extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('session');
+		$this->load->database();
+		$this->load->model('user_model'); 
+		$this->load->model('country_model'); 
+		$this->load->helper('functions'); 
 	}
 
 
@@ -32,7 +36,10 @@ class Welcome extends CI_Controller {
 		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
 		{
 			$this->session->sess_destroy(); 
-			$content  = $this->load->view('user/nc_home.php', '', TRUE);
+			$send_countries = $this->country_model->get_all_countries_send_money();
+			$receive_countries = $this->country_model->get_all_countries_send_receive();
+			
+			$content  = $this->load->view('user/nc_home.php', array('send_countries' => $send_countries, 'receive_countries' => $receive_countries), TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- Envoyez de l'aregent à vos proches en un click"
@@ -40,7 +47,12 @@ class Welcome extends CI_Controller {
 			$this->load->view('templates/nc_template.php', $data); 
 		}else
 		{
-			$data	  = array('error' => 'error'); 
+			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 3);
+			$recipients = $this->user_model->get_user_nb_recipients($this->session->userdata('user'), 0, 3);
+			$send_countries = $this->country_model->get_all_countries_send_money();
+			$receive_countries = $this->country_model->get_all_countries_send_receive();
+			$data	  = array('error' => 'error', 'transferts' => $transferts, 'recipients' => $recipients, 
+					  'send_countries' => $send_countries, 'receive_countries' => $receive_countries); 
 			$content  = $this->load->view('user/c_home.php', $data , TRUE);
 			$data 	  = array(
 				'content'	=>	$content,

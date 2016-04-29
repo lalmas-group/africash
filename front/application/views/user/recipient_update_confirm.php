@@ -15,7 +15,7 @@
 				<h3><b>Mon compte</b></h3>
 				<hr/><br/>
 				
-				<p style="text-color: green; margin: 10px;">Votre destinataire a bien été modifié avec succès.</p>
+				<p style="color: green; margin: 10px;">Votre destinataire a bien été modifié avec succès.</p>
 
 				<br/><br/>
 				<div class="row" style="margin: 10px;">
@@ -28,10 +28,10 @@
 				<h3><b>Mon compte</b></h3>
 				<hr/><br/>
 				
-				<p style="text-color: red/;">Votre destinataire n'a malheureusement pas été modifié. Veuillez réessayer plus tard.</p>
+				<p style="color: red/;">Votre destinataire n'a malheureusement pas été modifié. Veuillez réessayer plus tard.</p>
 				
 
-				<p style="text-color: red/;">Nous vous présentons nos sincères excuses pour se désagrément.</p>
+				<p style="color: red/;">Nous vous présentons nos sincères excuses pour se désagrément.</p>
 				
 				
 

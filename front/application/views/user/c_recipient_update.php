@@ -170,8 +170,12 @@
 				} ?>
 
 			<!-- end firstname -->
-				<br/><br/><br/>
-				<button type="submit" class="btn btn-primary" style="width: 100%; ">Créer le destinataire</button>
+				<br/><br/>
+				<button type="submit" class="btn btn-primary" style="width: 100%; ">Modifier le destinataire</button>
+				<br/><br/>
+				<a href="<?php echo base_url() . "index.php/user/recipient/"; ?>" style="float: center; ">
+					Annuler
+				</a>
 			</form>
     		</div>
   	</div>

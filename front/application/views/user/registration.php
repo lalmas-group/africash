@@ -190,20 +190,21 @@
 
 
 
-			
-
+		
 			
 			<!-- country -->
 			<?php if (!empty(form_error('country'))) { 
 				/* L'adresse email est mal rempli */
 			?>
-			
 				<div class="form-group has-error">
 					<label class="control-label" for="country">Pays</label><br/>
 						<select class="form-control input-lg" style="width: 100%; " name="country">
 							<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
-							<option class="form-control input-lg" value="1" <?php echo set_select('country', '1', TRUE); ?>>France</option><hr/>
-							<option class="form-control input-lg" value="2" <?php echo set_select('country', '2', TRUE); ?>>Belgique</option><hr/>
+							<?php foreach ( $countries as $country ) {?>
+								<option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+									<?php echo $country->name; ?>
+								</option><hr/>
+							<?php } ?>
 						</select>
 					<div class="control-label"><?php echo form_error('country');?></div>
   				</div>
@@ -213,20 +214,26 @@
 				?>
 					<div class="form-group has-success">
 						<label class="control-label" for="country">Pays</label><br/>
-							<select class="form-control input-lg" style="width: 100%; " name="country">
-								<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
-								<option class="form-control input-lg" value="1" <?php echo set_select('country', '1', TRUE); ?>>France</option><hr/>
-								<option class="form-control input-lg" value="2" <?php echo set_select('country', '2', TRUE); ?>>Belgique</option><hr/>
-							</select>
+						<select class="form-control input-lg" style="width: 100%; " name="country">
+							<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+							<?php foreach ( $countries as $country ) {?>
+								<option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+									<?php echo $country->name; ?>
+								</option><hr/>
+							<?php } ?>
+						</select>
 					</div>
 				<?php } else { ?>
 					<div class="form-group">
 						<label class="control-label" for="country">Pays</label><br/>
-							<select class="form-control input-lg" style="width: 100%; " name="country">
-								<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
-								<option class="form-control input-lg" value="1" <?php echo set_select('country', '1', TRUE); ?>>France</option><hr/>
-								<option class="form-control input-lg" value="2" <?php echo set_select('country', '2', TRUE); ?>>Belgique</option><hr/>
-							</select>
+						<select class="form-control input-lg" style="width: 100%; " name="country">
+							<option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+							<?php foreach ( $countries as $country ) {?>
+								<option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+									<?php echo $country->name; ?>
+								</option><hr/>
+							<?php } ?>
+						</select>
 					</div>
 			<?php 	}
 			} ?> 
@@ -267,55 +274,8 @@
 			} ?> 
 			<br/>
 			<!-- end address -->
-
-
-
-
-
-
 			
-			<!-- ville -->
-			<?php if (!empty(form_error('town'))) { 
-				/* L'adresse email est mal rempli */
-			?>
-			
-				<div class="form-group has-error">
-					<label class="control-label" for="line1">Ville : </label><br/>
-						<select class="form-control input-lg" style="width: 100%; " name="town">
-							<option class="form-control input-lg" value="" <?php echo set_select('town', '', TRUE); ?>>Choisissez une ville</option><hr/>
-							<option class="form-control input-lg" value="1" <?php echo set_select('town', '1', TRUE); ?>>Lille</option><hr/>
-							<option class="form-control input-lg" value="2" <?php echo set_select('town', '2', TRUE); ?>>Paris</option><hr/>
-						</select>
-<!--  					<input type="text" class="form-control input-lg"  aria-describedby="sizing-addon1"   style="width: 100%; " name="town" value="<?php echo set_value('town');?>"/>-->
-					<div class="control-label"><?php echo form_error('town');?></div>
-  				</div>
-			<?php } else { ?>
-				<?php if ( !empty(validation_errors()) && empty(form_error('town')) ) { 
-					/* Erreur dans le formulaire mais pas ici */	
-				?>	
-					<div class="form-group has-success">
-						<label class="control-label" for="line1">Ville : </label><br/>
-						<select class="form-control input-lg" style="width: 100%; " name="town">
-							<option class="form-control input-lg" value="" <?php echo set_select('town', '', TRUE); ?>>Choisissez une ville</option><hr/>
-							<option class="form-control input-lg" value="1" <?php echo set_select('town', '1', TRUE); ?>>Lille</option><hr/>
-							<option class="form-control input-lg" value="2" <?php echo set_select('town', '2', TRUE); ?>>Paris</option><hr/>
-						</select>
-					</div>
-				<?php } else { ?>
-					<div class="form-group">
-						<label class="control-label" for="line1">Ville : </label><br/>
-						<select class="form-control input-lg" style="width: 100%; " name="town">
-							<option class="form-control input-lg" value="" <?php echo set_select('town', '', TRUE); ?>>Choisissez une ville</option><hr/>
-							<option class="form-control input-lg" value="1" <?php echo set_select('town', '1', TRUE); ?>>Lille</option><hr/>
-							<option class="form-control input-lg" value="2" <?php echo set_select('town', '2', TRUE); ?>>Paris</option><hr/>
-						</select>
-					</div>
-			<?php 	}
-			} ?> 
-			<br/>
 			<!-- end ville -->
-
-
 
 
 

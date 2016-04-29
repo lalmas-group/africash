@@ -13,6 +13,18 @@ class Country_model extends CI_Model
 		$query	=	$query[0]; 
 		return $query->country; 
 	}
+
+	public function get_country($id)
+        {
+                $query  =       "select * from country where id = '$id';";
+		echo $query;
+                $query  =       $this->db->query($query);
+                $query  =       $query->result();
+		print_r($query);
+                $query  =       $query[0];
+                return $query;
+        }
+
 	
 	public function get_country_name($country)
 	{
@@ -46,5 +58,22 @@ class Country_model extends CI_Model
 		$query	=	$query->result(); 
 		$query	=	$query[0]; 
 		return $query->phone_code; 
+	}
+
+	public function get_all_countries_send_money()
+	{
+		$query	=	"select distinct * from country where money_send = '1';"; 
+		$query	=	$this->db->query($query); 
+		$query	=	$query->result(); 
+		return $query; 
+	}
+	
+
+	public function get_all_countries_send_receive()
+	{
+		$query	=	"select * from country where money_receive = '1';"; 
+		$query	=	$this->db->query($query); 
+		$query	=	$query->result(); 
+		return $query; 
 	}
 }

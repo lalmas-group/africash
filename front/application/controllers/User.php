@@ -26,6 +26,9 @@ class User extends CI_Controller {
 		$this->load->library('session');
 		$this->load->database();
 
+		$this->load->helper('functions');
+		$this->load->helper('security');
+
 		$this->load->model('user_model'); 
 		$this->load->model('country_model'); 
 	}
@@ -49,7 +52,8 @@ class User extends CI_Controller {
 			$this->load->view('templates/nc_template.php', $data); 
 		}else
 		{
-			$data	  = array('error' => 'error'); 
+			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 3);
+			$data	  = array('error' => 'error', 'transferts' => $transferts); 
 			$content  = $this->load->view('user/c_home.php', $data , TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
@@ -68,7 +72,8 @@ class User extends CI_Controller {
 		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
 		{
 			$this->session->sess_destroy(); 
-			$content  = $this->load->view('user/registration.php', '', TRUE);
+			$countries = $this->country_model->get_all_countries_send_money();
+			$content  = $this->load->view('user/registration.php', array('countries' => $countries), TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- Inscrivez vous!"
@@ -78,6 +83,40 @@ class User extends CI_Controller {
 		{
 			redirect ('/', 'location'); 
 		}
+	}
+
+	public function show_transferts($page=null)
+	{
+		if ( $page == null || $page == 0 ) 
+		{
+			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 10); 
+			$all_transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
+			$content  = $this->load->view('user/c_transferts.php', array ('status'	=> '', 'transferts' => $transferts, 'page' => 0, 'all_transferts' => $all_transferts), TRUE);
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- "
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+		}else if ( intval($page) > 0 ) {
+			$all_transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
+			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'),((10*intval($page))-1),10); 
+			$content  = $this->load->view('user/c_transferts.php', array ('status'	=> '', 'transferts' => $transferts, 'page' => $page, 'all_transferts' => $all_transferts), TRUE);
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- "
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+		}else {
+			$all_transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
+			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 10); 
+			$content  = $this->load->view('user/c_transferts.php', array ('status'	=> '', 'transferts' => $transferts, 'page' => 0, 'all_transferts' => $all_transferts), TRUE);
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- "
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+		}
+			
 	}
 
 	/**
@@ -129,9 +168,9 @@ class User extends CI_Controller {
 			array('required'	=>	'%s ne peut pas être vide.',				      
 			'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
 		));
-		$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
+		/*$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
 			array('required'	=>	'%s ne peut pas être vide.',				      
-		));
+		));*/
 		$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
 			'trim|required|numeric|callback_validate_phone_number',
 			array('required'	=>	'%s ne peut pas être vide.',				      
@@ -143,7 +182,8 @@ class User extends CI_Controller {
 		));
 		if ($this->form_validation->run() == FALSE)
 		{
-			$content  = $this->load->view('user/registration.php', '', TRUE);
+			$countries = $this->country_model->get_all_countries_send_money();
+			$content  = $this->load->view('user/registration.php', array('countries' => $countries), TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- Inscrivez vous!"
@@ -266,14 +306,18 @@ class User extends CI_Controller {
 
 
 
-	public function card_paiement($id)
+	public function card_paiement($reference)
 	{
+		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') !== "AFRICASH-USER")) 
+		{
+			redirect ('/', 'location'); 
+		}
 		$this->load->library('form_validation');
 		$this->load->helper('security');
 		$name		=	xss_clean($this->input->post('name', TRUE));
 		$card_number	=	xss_clean($this->input->post('card_number', TRUE));
 		$expiration_date=	xss_clean($this->input->post('expiration_date', TRUE));
-		$ccv		=	xss_clean($this->input->post('ccv', TRUE));
+		$cvv		=	xss_clean($this->input->post('cvv', TRUE));
 		$this->form_validation->set_rules('name', 'Le nom du titulaire de la carte ', 
 			'trim|required',
 			array('required'	=>	'%s ne peut pas être vide.',				      
@@ -293,7 +337,7 @@ class User extends CI_Controller {
 				'max_length'	=>	'%s doit être dans le format mm/aa.',				      
 				'validate_card_expiration_date'	=>	'%s doit être dans le format mm/aa.',				      
 		));
-		$this->form_validation->set_rules('ccv', 'Le code au dos de votre carte ', 
+		$this->form_validation->set_rules('cvv', 'Le code au dos de votre carte ', 
 			'trim|required|numeric|min_length[3]|max_length[3]',
 		array(	'required'	=>	'%s ne peut pas être vide.',				      
 			'numeric'	=>	'%s doit contenir que des chiffres.',				      
@@ -303,7 +347,7 @@ class User extends CI_Controller {
 		if ($this->form_validation->run() == FALSE)
 		{
 			$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
-			$content  = $this->load->view('user/c_card_paiement.php', array ('status'	=> '', 'id' => $id), TRUE);
+			$content  = $this->load->view('user/c_card_paiement.php', array ('status'	=> '', 'reference' => $reference), TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- "
@@ -311,10 +355,18 @@ class User extends CI_Controller {
 			$this->load->view('templates/c_template.php', $data); 
 			return; 
 		}
+		/* Envoie dela requete ) la banque */
+		echo "Envoi requête à la banque:";		
+		echo "<br/>";
+		echo "Nom: $name, numéro de carte: $card_number, date d'expiration:$expiration_date, cvv:$cvv";
 	}
 
 	public function paiement($type, $reference)
 	{
+		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') !== "AFRICASH-USER")) 
+		{
+			redirect ('/', 'location'); 
+		}
 		if ( $type == "bank_transfer" )
 		{
 			$id	  = $this->user_model->get_transfert_id_by_reference($reference); 
@@ -329,7 +381,7 @@ class User extends CI_Controller {
 		}
 		if ( $type == "bank_card" )
 		{
-			$id	  = $this->user_model->get_transfert_id_by_reference($reference); 
+			$id	  = $this->user_model->get_transfert_id_by_reference(strtolower($reference)); 
 			$content  = $this->load->view('user/c_card_paiement.php', 
 				array ('status'    => 'success', 'reference' => $reference, 'id' => $id), TRUE);		
 			$data 	  = array(
@@ -340,7 +392,7 @@ class User extends CI_Controller {
 			return; 
 		}
 	}
-	public function transfert($onglet=null, $recipient=null)
+	public function transfert($onglet=null, $recipient=null, $page=null)
 	{
 		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
 		{
@@ -436,12 +488,13 @@ class User extends CI_Controller {
 				else
 				{
 					//$ref	  = $this->user_model->get_transfert_id_by_reference($reference); 
-					redirect("user/paiement/$cont/$reference", 'location');
+					redirect("user/paiement/$cont/" . strtoupper($reference), 'location');
 				}					
 			}
 			else {
-				$transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
-				$content  = $this->load->view('user/c_transferts.php', array ('status'	=> '', 'transferts' => $transferts), TRUE);
+				$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 10); 
+				$all_transferts = $this->user_model->get_user_transferts($this->session->userdata('user')); 
+				$content  = $this->load->view('user/c_transferts.php', array ('status'	=> '', 'transferts' => $transferts, 'page' => 0, 'all_transferts' => $all_transferts), TRUE);
 				$data 	  = array(
 					'content'	=>	$content,
 					'title'		=>	"Africash -- "
@@ -454,7 +507,24 @@ class User extends CI_Controller {
 	}
 
 
+	public function summary($reference)
+	{
+		if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
+		{
+			redirect ('/', 'location'); 
+		}
+		$transfert = $this->user_model->get_transfert_by_reference($reference);
+		$recipient = $this->user_model->get_transfert_recipient_by_reference($reference); 
+		$content  = $this->load->view('user/c_transfert_summary.php', 
+			array ('status'	=> '', 'transfert' => $transfert, 'recipient' => $recipient), TRUE);
+		$data 	  = array(
+			'content'	=>	$content,
+			'title'		=>	"Africash -- "
+		); 
+		$this->load->view('templates/c_template.php', $data); 
+		return;
 
+	}
 
 
 	public function recipient($onglet = null, $recipient = null, $action = null)
@@ -495,8 +565,10 @@ class User extends CI_Controller {
 					'validate_phone_number_recipient'		=>	'%s est déjà utilisé.',
 				));
 				if ($this->form_validation->run() == FALSE)
-				{	
+				{
+					$countries	=	$this->country_model->get_all_countries_send_receive();
 					$data 	  = array(
+						'countries'	=>	$countries,
 						'error'	=>	"",
 					); 
 					// Formulaire mal rempli
@@ -791,6 +863,15 @@ class User extends CI_Controller {
 	{
 		$this->session->sess_destroy(); 
 		redirect('/', 'location'); 
+	}
+
+
+	public function country_values()
+	{
+		$country	=	xss_clean($this->input->post('country'));
+		$count		=	$this->country_model->get_country($country); 
+		$currency	=	$this->country_model->get_country_currency_sign($country);
+		echo $count->id . "&" . $count->phone_code . "&" . $currency; 		
 	}
 
 }

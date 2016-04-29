@@ -23,6 +23,7 @@
     		</div>
   	</div>
 	<br/><br/><br/><br/>
+	<?php if ( count($recipients) != 0 ) { ?>
 	<div class="row" style="margin: 10px; ">
 		<div class="col-md-8 col-md-offset-2 table-responsive">
 		
@@ -54,7 +55,7 @@
 							<a href="<?php echo base_url() . "index.php/user/recipient/delete/$id"; ?>">
 								<button class="btn btn-danger" title="Supprimer ce destinataire."><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
 							</a>
-							<a href="<?php echo base_url() . "index.php/user/recipient/delete/$id"; ?>">
+							<a href="<?php echo base_url() . "index.php/user/transfert/new/$id"; ?>">
 								<button class="btn btn-info" title="Envoyez de l'argent à ce destinataire."><span class="glyphicon glyphicon-send" aria-hidden="true"></span></button>
 							</a>
 						</td>
@@ -65,4 +66,16 @@
 			
 		</div>	
 	</div>
+	<?php } else { ?>
+	<div class="row">
+		<div class="col-md-9 col-md-offset-2" >
+			<h3>Vos bénéficiaires</h3>
+			<hr/>
+			<p style="margin: 50px; "> Vous n'avez aucun bénéficiare.</p>
+			<a href="" style="margin: 50px; ">
+				<button  class="btn btn-primary" >CREER UN BENEFICIARE</button>
+			</a>
+		</div>
+	</div>
+	<?php } ?>
 </div>

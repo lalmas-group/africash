@@ -13,6 +13,10 @@
 	
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" 
 		integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+
 	    	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	    	<!--[if lt IE 9]>

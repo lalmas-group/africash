@@ -21,7 +21,7 @@
 			<p>Image cartes ici</p>
 
 			<h3>Entrez vos coordonnées bancaires</h3>
-			<form method="post" action="<?php echo base_url() . "index.php/user/card_paiement/$id"; ?>"  style="margin: 10px;">
+			<form method="post" action="<?php echo base_url() . "index.php/user/card_paiement/$reference"; ?>"  style="margin: 10px;">
 			<?php if (!empty(form_error('name'))) { 
 				/* L'adresse email est mal rempli */
 			?>
@@ -29,7 +29,7 @@
 				<div class="form-group has-error">
 					<label class="control-label" for="name">Nom du titulaire:</label><br/>
     					<div class="input-group" style="width: 100%;">
-      						<input type="text" class="form-control input-lg" id=name" name="name" value="<?php echo set_value('name');?>">
+      						<input type="text" class="form-control input-lg" id="name" name="name" value="<?php echo set_value('name');?>">
 					</div>
 					<div class="control-label"><?php echo form_error('name');?></div>
   				</div>
@@ -40,14 +40,14 @@
 					<div class="form-group has-success">
 						<label class="control-label" for="name">Nom du titulaire: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id=name" name="name" value="<?php echo set_value('name');?>">
+		      					<input type="text" class="form-control input-lg" id="name" name="name" value="<?php echo set_value('name');?>">
     						</div>
 					</div>
 				<?php } else { ?>
 					<div class="form-group">
 						<label class="control-label" for="name">Nom du titulaire: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id=name" name="name"  style="width: 100%; ">
+		      					<input type="text" class="form-control input-lg" id="name" name="name"  style="width: 100%;" placeholder="Votre nom">
     						</div>
 					</div>
 			<?php 	}
@@ -61,7 +61,7 @@
 				<div class="form-group has-error">
 					<label class="control-label" for="card_number">Numéro de carte:</label><br/>
     					<div class="input-group" style="width: 100%;">
-      						<input type="text" class="form-control input-lg" id=card_number" card_number="card_number" value="<?php echo set_value('card_number');?>">
+      						<input type="text" class="form-control input-lg" id="card_number" name="card_number" value="<?php echo set_value('card_number');?>">
 					</div>
 					<div class="control-label"><?php echo form_error('card_number');?></div>
   				</div>
@@ -72,14 +72,14 @@
 					<div class="form-group has-success">
 						<label class="control-label" for="card_number">Numéro de carte: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id=card_number" card_number="card_number" value="<?php echo set_value('card_number');?>">
+		      					<input type="text" class="form-control input-lg" id="card_number" name="card_number" value="<?php echo set_value('card_number');?>">
     						</div>
 					</div>
 				<?php } else { ?>
 					<div class="form-group">
 						<label class="control-label" for="card_number">Numéro de carte: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id=card_number" card_number="card_number" value="50">
+		      					<input type="text" class="form-control input-lg" id="card_number" name="card_number">
     						</div>
 					</div>
 			<?php 	}
@@ -112,7 +112,7 @@
 					<div class="form-group">
 						<label class="control-label" for="expiration_date">Date d'expiration: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id="expiration_date" name="expiration_date" value="50">
+		      					<input type="text" class="form-control input-lg" id="expiration_date" name="expiration_date" >
     						</div>
 					</div>
 			<?php 	}
@@ -128,7 +128,7 @@
 				<div class="form-group has-error">
 					<label class="control-label" for="cvv">CVV:</label><br/>
     					<div class="input-group" style="width: 100%;">
-      						<input type="text" class="form-control input-lg" id=cvv" cvv="cvv" value="<?php echo set_value('cvv');?>">
+      						<input type="text" class="form-control input-lg" id="cvv" name="cvv" value="<?php echo set_value('cvv');?>">
 					</div>
 					<div class="control-label"><?php echo form_error('cvv');?></div>
   				</div>
@@ -139,14 +139,14 @@
 					<div class="form-group has-success">
 						<label class="control-label" for="cvv">CVV: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id=cvv" cvv="cvv" value="<?php echo set_value('cvv');?>">
+		      					<input type="text" class="form-control input-lg" id="cvv" name="cvv" value="<?php echo set_value('cvv');?>">
     						</div>
 					</div>
 				<?php } else { ?>
 					<div class="form-group">
 						<label class="control-label" for="cvv">CVV: </label><br/>
     						<div class="input-group" style="width: 100%;">
-		      					<input type="text" class="form-control input-lg" id=cvv" cvv="cvv" value="50">
+		      					<input type="text" class="form-control input-lg" id="cvv" name"cvv">
     						</div>
 					</div>
 			<?php 	}

@@ -12,20 +12,36 @@
 		<h3 style="text-align: center;">Simulez votre transfert</h3>
 		<br/>
 		<form method="" action="">
+			<label for="country_from">De:</label><br/>
+			<select class="form-control input-lg" style="width: 100%; " name="country_from" id="country_from">
+                        	<option class="form-control input-lg" value="" <?php echo set_select('country_from', '', TRUE); ?>>Votre pays</option><hr/>
+                                	<?php foreach ( $send_countries as $country ) {?>
+                               	<option class="form-contol input-lg" value="<?php echo $country->id;?>">
+                                       	<?php echo $country->name; ?>
+                                 </option><hr/>
+                        	        <?php } ?>
+                        </select>
+
+			<br/>
 			<label for="amount">Somme envoyée:</label><br/>
 			<div class="form-group">
     				<div class="input-group">
-      					<div class="input-group-addon btn-primary" style="color: white; ">
+      					<div class="input-group-addon btn-success" style="color: yellow; ">
 						EUR
 					</div>
       					<input type="text" class="form-control input-lg" id="acount" name="acount" placeholder="Somme envoyée">
-      					<div class="input-group-addon btn-primary" style="color: white; ">.00</div>
+      					<div class="input-group-addon btn-success" style="color: yellow; ">.00</div>
     				</div>
   			</div>
-<!--label for="from">De:</label><br/>
-			<input type="text" name="from" id="from" class="form-control input-lg " placeholder="Pays de"/>-->
-			<label for="to">Vers:</label><br/>
-			<input type="text" name="to" id="to" class="form-control input-lg " value="Guinée" disabled/>
+			<label for="country_to">Vers:</label><br/>
+			<select class="form-control input-lg" style="width: 100%; " name="country_to">
+                        	<option class="form-control input-lg" value="nothing" selected="selected">Pays du destinataire</option><hr/>
+                                	<?php foreach ( $receive_countries as $country ) {?>
+                               	<option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+                                       	<?php echo $country->name; ?>
+                                 </option><hr/>
+                        	        <?php } ?>
+                        </select>
 			<br/>
 			<label for="delivry_mode">Mode de livraison:</label><br/>
 			<input type="text" name="delivry_mode" id="delivry_mode" class="form-control input-lg " placeholder="Mode de livraison" disabled/>
@@ -34,19 +50,40 @@
 			<label for="amount_received">Somme reçue: </label><br/>
 			<div class="form-group">
     				<div class="input-group">
-      					<div class="input-group-addon btn-primary" style="color: white; ">
-						FG
+      					<div class="input-group-addon btn-success" style="color: yellow; ">
+						GNF
 					</div>
       					<input type="text" class="form-control input-lg" id="amount_received" name="amount_received" value="0" disabled>
-      					<div class="input-group-addon btn-primary" style="color: white; ">.00</div>
+      					<div class="input-group-addon btn-success" style="color: yellow; ">.00</div>
     				</div>
   			</div>
 			<!--<input type="text" name="amount_received" id="amount_received" class="form-control input-lg " placeholder="0.00"/>-->
 			<p class="cost"></p>
-			<button style="float: center; " type="submit" class="btn btn-primary">Envoyez de l'argent</button>
+			<br/>
+			<br/><br/>
+			<button style="float: center; " type="submit" class="btn btn-success" style="color: yellow; ">Envoyez de l'argent</button>
 			<br/><br/>
 			
 		</form>
 	</div>
 </div>
 </div>
+
+
+<script>
+$('#country_from').change(function() {
+	alert( "Handler for .change() called." );
+	var country	=	$("#country_from").val();
+	alert(country);
+	$.ajax({
+		'type'	:	"POST",
+		'url'	:	"<?php echo base_url() . "index.php/user/country_values" ; ?>",
+		'data'	:	'country=' +  country,
+		'dataType' : 	"text",
+		
+		success : function (text, statut) {
+			alert('' +  text);
+		},
+	});
+});
+</script>

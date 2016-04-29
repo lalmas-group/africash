@@ -7,7 +7,7 @@
 				<h3><b>Mon compte</b></h3>
 				<hr/><br/>
 				
-				<p style="text-color: green;">Votre compte a bien été crée. Vous allez recevoir un mail de confirmation de la part de nos équipes.</p>
+				<p style="color: green;">Votre compte a bien été crée. Vous allez recevoir un mail de confirmation de la part de nos équipes.</p>
 
 				<br/><br/>
 				<div class="row">
@@ -23,10 +23,10 @@
 				<h3><b>Mon compte</b></h3>
 				<hr/><br/>
 				
-				<p style="text-color: red/;">Votre compte n'a malheureusement pas été crée. Veuillez réessayer plus tard.</p>
+				<p style="color: red/;">Votre compte n'a malheureusement pas été crée. Veuillez réessayer plus tard.</p>
 				
 
-				<p style="text-color: red/;">Nous vous présentons nos sincères excuses pour se désagrément.</p>
+				<p style="color: red/;">Nous vous présentons nos sincères excuses pour se désagrément.</p>
 				
 				
 
