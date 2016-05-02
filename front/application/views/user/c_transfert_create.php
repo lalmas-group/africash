@@ -3,10 +3,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
-  			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
+  			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 
@@ -29,9 +28,10 @@
 					<label class="control-label" for="amount">Envoyer:</label><br/>
 	    				<div class="input-group">
       						<div class="input-group-addon btn-primary" style="color: white; ">
-							EUR
+							<?php echo $this->country_model->get_country_currency_short_name(
+							$this->session->userdata('country')); ?>
 						</div>
-      						<input type="text" class="form-control input-lg" id=amount" name="amount" value="<?php echo set_value('amount');?>">
+      						<input type="text" class="form-control input-lg" id="amount" name="amount" value="<?php echo set_value('amount');?>">
       						<div class="input-group-addon btn-primary" style="color: white; ">
 							.00
 						</div>
@@ -46,9 +46,11 @@
 						<label class="control-label" for="amount">Envoyer: </label><br/>
 						<div class="input-group">
       							<div class="input-group-addon btn-primary" style="color: white; ">
-								EUR
+								<?php echo $this->country_model->get_country_currency_short_name(
+								$this->session->userdata('country')); ?>
+								
 							</div>
-		      					<input type="text" class="form-control input-lg" id=amount" name="amount" value="<?php echo set_value('amount');?>">
+		      					<input type="text" class="form-control input-lg" id="amount" name="amount" value="<?php echo set_value('amount');?>">
       							<div class="input-group-addon btn-primary" style="color: white; ">
 								.00
 							</div>
@@ -59,9 +61,10 @@
 						<label class="control-label" for="amount">Envoyer: </label><br/>
     						<div class="input-group">
 	      						<div class="input-group-addon btn-primary" style="color: white; ">
-								EUR
+								<?php echo $this->country_model->get_country_currency_short_name(
+								$this->session->userdata('country')); ?>
 							</div>
-		      					<input type="text" class="form-control input-lg" id=amount" name="amount" value="50">
+		      					<input type="text" class="form-control input-lg" id="amount" name="amount">
 	      						<div class="input-group-addon btn-primary" style="color: white; ">
 								.00
 							</div>
@@ -74,26 +77,29 @@
 				
 				<br/>
 			<!-- END Email -->
-						<div class="form-group">
-							<label class="control-label" for="amount_receive">Recevoir: </label><br/>
-    							<div class="input-group">
-	      							<div class="input-group-addon btn-primary" style="color: white; ">
-									GNF 
-								</div>
-			      					<input type="text" class="form-control input-lg" id=amount_receive" name="amount_receive" value="466 505">
-	      							<div class="input-group-addon btn-primary" style="color: white; ">
-									.00
-								</div>
-    							</div>
-						</div>	
+				<div class="form-group">
+					<label class="control-label" for="amount_received">Recevoir: </label><br/>
+					<div class="input-group">
+						<div class="input-group-addon btn-primary" style="color: white; ">
+							<?php echo $this->country_model->get_country_currency_short_name(
+								$recipient_object->country); ?>
+						</div>
+	      					<input type="text" class="form-control input-lg" id="amount_received"name="amount_received"
+						disabled="disabled">
+						<div class="input-group-addon btn-primary" style="color: white; ">
+							.00
+						</div>
+					</div>
+				</div>	
 				<br/>
 				<div class="form-group">
 					<label class="control-label" for="cost">Nos Frais: </label><br/>
 					<div class="input-group">
 						<div class="input-group-addon btn-primary" style="color: white; ">
-							EUR
+							<?php echo $this->country_model->get_country_currency_short_name(
+							$this->session->userdata('country')); ?>
 						</div>
-	      					<input type="text" class="form-control input-lg" id=cost" name="cost" value="2,50">
+	      					<input type="text" class="form-control input-lg" id="cost" name="cost" disabled="disabled">
 					</div>
 				</div>	
 				<br/>
@@ -101,9 +107,10 @@
 					<label class="control-label" for="currency_change">Taux de change: </label><br/>
 					<div class="input-group">
 						<div class="input-group-addon btn-primary" style="color: white; ">
-							GNF
+							<?php echo $this->country_model->get_country_currency_short_name(
+								$recipient_object->country); ?>
 						</div>
-	      					<input type="text" class="form-control input-lg" id=cost" name="currency_change" value="9335.96608">
+	      					<input type="text" class="form-control input-lg" id="change" name="change" disabled="disabled">
 					</div>
 				</div>
 				<br/>
@@ -117,7 +124,6 @@
 							<div class="input-group">
 								<input type="radio" name="paiement_means" value="1"> Carte bancaire </label><br/>
 								<input type="radio" name="paiement_means" value="2"> Virement </label><br/>
-								<input type="radio" name="paiement_means" value="3"> Paypal </label>
 							</div>	
 							<div class="control-label"><?php echo form_error('paiement_means');?></div>
 	  					</div>
@@ -130,7 +136,6 @@
 							<div class="input-group">
 								<input type="radio" name="paiement_means" value="1"> Carte bancaire </label><br/>
 								<input type="radio" name="paiement_means" value="2"> Virement </label><br/>
-								<input type="radio" name="paiement_means" value="3"> Paypal </label>
 							</div>	
 							<div class="control-label"><?php echo form_error('paiement_means');?></div>
 					</div>
@@ -140,7 +145,6 @@
 							<div class="input-group">
 								<input type="radio" name="paiement_means" value="1" > Carte bancaire </label><br/>
 								<input type="radio" name="paiement_means" value="2"> Virement </label><br/>
-								<input type="radio" name="paiement_means" value="3"> Paypal </label>
 							</div>	
 							<div class="control-label"><?php echo form_error('paiement_means');?></div>
 					</div>
@@ -151,7 +155,9 @@
 				<br/><br/>
 			
 
-				<button type="submit" class="btn btn-primary" style="width: 100%; ">Créer un compte</button>
+				<button type="submit" class="btn btn-primary" style="width: 100%; " id="submit" disabled="disabled">
+					Valider
+				</button>
 				<input type="hidden" value="<?php echo $recipient; ?>" name="recipient"/>
 			</form>
     		</div>
@@ -161,3 +167,39 @@
     		</div>
   	</div>
 </div>
+<?php echo $this->session->userdata('country'); ?>
+
+<script>
+$('#amount').bind("keyup", function() {
+        var amount      =       $("#amount").val();
+        var amount_int  =       parseInt(amount);
+        if ( isNaN(amount_int) && amount != "") {
+                alert("Veuillez choisir un nombre !");
+                $("#submit").attr('disabled', 'disabled'); 
+                return;
+        }
+        if ( amount == "" ) {
+                $("#submit").attr('disabled', 'disabled'); 
+                return ; 
+        }
+        if ( !isNaN(amount_int) && amount_int != 0 )
+        {
+                $.ajax({
+                        'type'  :       "POST",
+                        'url'   :       "<?php echo base_url() . "index.php/user/amount_change/" ; ?>",
+                        'data'  :       'country_from=' + <?php echo $this->session->userdata('country');?> + 
+				"&" + "country_to=" + <?php echo $recipient_object->country; ?> + "&amount=" + amount,
+                        'dataType' :    "text",
+                
+                        success : function (text, statut) {
+                                var res = text.split("&");
+                                $("#amount_received").attr('value', res[0]);
+                                $("#cost").attr('value', res[1]);
+                                $("#change").attr('value', res[3] );
+                                $("#submit").removeAttr('disabled');
+                        },
+                });
+        } 
+});
+
+</script>

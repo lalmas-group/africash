@@ -17,13 +17,20 @@ class Country_model extends CI_Model
 	public function get_country($id)
         {
                 $query  =       "select * from country where id = '$id';";
-		echo $query;
                 $query  =       $this->db->query($query);
                 $query  =       $query->result();
-		print_r($query);
                 $query  =       $query[0];
                 return $query;
         }
+	public function get_change($currency_from, $currency_to)
+        {
+                $query  =       "select * from currency_translate where currency_from = '$currency_from' and currency_to = '$currency_to';";
+                $query  =       $this->db->query($query);
+                $query  =       $query->result();
+                $query  =       $query[0];
+                return $query;
+        }
+
 
 	
 	public function get_country_name($country)
@@ -51,6 +58,14 @@ class Country_model extends CI_Model
 		$query	=	$query[0]; 
 		return $query->currency_sign; 
 	}
+	public function get_country_currency_short_name($country)
+	{
+		$query	=	"select short_name from country, currency where country.id = '$country'  and country.currency = currency.id;"; 
+		$query	=	$this->db->query($query); 
+		$query	=	$query->result(); 
+		$query	=	$query[0]; 
+		return $query->short_name; 
+	}
 	public function get_country_code($country)
 	{
 		$query	=	"select phone_code from country where id = '$country';"; 
@@ -69,7 +84,7 @@ class Country_model extends CI_Model
 	}
 	
 
-	public function get_all_countries_send_receive()
+	public function get_all_countries_receive_money()
 	{
 		$query	=	"select * from country where money_receive = '1';"; 
 		$query	=	$this->db->query($query); 

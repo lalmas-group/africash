@@ -1,10 +1,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 	

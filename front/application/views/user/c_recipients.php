@@ -3,10 +3,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 	
@@ -30,7 +29,6 @@
 			<table class="table table-hover">
 				<thead>
       					<tr>
-        					<th>#</th>
         					<th>Prénom(s)</th>
         					<th>Nom</th>
         					<th>Pays</th>
@@ -41,7 +39,6 @@
     				<tbody>
 					<?php foreach ( $recipients as $recipient ) { ?>
 					<tr>
-						<td><?php echo $recipient->id; ?></td>
 						<td><?php echo $recipient->firstname; ?></td>
 						<td><?php echo $recipient->name; ?></td>
 						<td><?php echo $this->country_model->get_country_name($recipient->country); ?></td>

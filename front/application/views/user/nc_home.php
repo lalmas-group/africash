@@ -10,6 +10,7 @@
 	</div>
 	<div class="col-md-4 col-md-offset-1 col-lg-4 col-lg-offset-1" style="border-radius: 5px 5px 5px 5px; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);">
 		<h3 style="text-align: center;">Simulez votre transfert</h3>
+		<hr/>
 		<br/>
 		<form method="" action="">
 			<label for="country_from">De:</label><br/>
@@ -23,45 +24,47 @@
                         </select>
 
 			<br/>
-			<label for="amount">Somme envoyée:</label><br/>
-			<div class="form-group">
-    				<div class="input-group">
-      					<div class="input-group-addon btn-success" style="color: yellow; ">
-						EUR
-					</div>
-      					<input type="text" class="form-control input-lg" id="acount" name="acount" placeholder="Somme envoyée">
-      					<div class="input-group-addon btn-success" style="color: yellow; ">.00</div>
-    				</div>
-  			</div>
 			<label for="country_to">Vers:</label><br/>
-			<select class="form-control input-lg" style="width: 100%; " name="country_to">
-                        	<option class="form-control input-lg" value="nothing" selected="selected">Pays du destinataire</option><hr/>
+			<select class="form-control input-lg" style="width: 100%; " name="country_to" id="country_to"
+				disabled="disabled">
+                        	<option class="form-control input-lg" value="" selected="selected">Pays du destinataire</option><hr/>
                                 	<?php foreach ( $receive_countries as $country ) {?>
-                               	<option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+                               	<option class="form-contol input-lg" value="<?php echo $country->id;?>">
                                        	<?php echo $country->name; ?>
                                  </option><hr/>
                         	        <?php } ?>
                         </select>
 			<br/>
-			<label for="delivry_mode">Mode de livraison:</label><br/>
-			<input type="text" name="delivry_mode" id="delivry_mode" class="form-control input-lg " placeholder="Mode de livraison" disabled/>
-			<br/>
+			<label for="amount">Somme envoyée:</label><br/>
+			<div class="form-group">
+    				<div class="input-group">
+      					<div class="input-group-addon btn-success" style="color: yellow; " id="send-money-sign">
+												
+					</div>
+      					<input type="text" class="form-control input-lg" id="amount" name="amount" placeholder="Somme envoyée" autocomplete="off" 
+					disabled="disabled">
+      					<div class="input-group-addon btn-success" style="color: yellow; ">.00</div>
+    				</div>
+  			</div>
 			<hr/>	
 			<label for="amount_received">Somme reçue: </label><br/>
 			<div class="form-group">
     				<div class="input-group">
-      					<div class="input-group-addon btn-success" style="color: yellow; ">
-						GNF
+      					<div class="input-group-addon btn-success" style="color: yellow; " id="receive-money-sign">
+						
 					</div>
-      					<input type="text" class="form-control input-lg" id="amount_received" name="amount_received" value="0" disabled>
+      					<input type="text" class="form-control input-lg" id="amount_received" name="amount_received"
+					disabled="disabled">
       					<div class="input-group-addon btn-success" style="color: yellow; ">.00</div>
     				</div>
   			</div>
 			<!--<input type="text" name="amount_received" id="amount_received" class="form-control input-lg " placeholder="0.00"/>-->
-			<p class="cost"></p>
+			<br/><br/>
+			<p id="cost"></p>
+			<p id="change"></p>
 			<br/>
 			<br/><br/>
-			<button style="float: center; " type="submit" class="btn btn-success" style="color: yellow; ">Envoyez de l'argent</button>
+			<button disabled="disabled" style="float: center; " type="submit" class="btn btn-success" style="color: yellow; " id="submit">Envoyez de l'argent</button>
 			<br/><br/>
 			
 		</form>
@@ -72,9 +75,11 @@
 
 <script>
 $('#country_from').change(function() {
-	alert( "Handler for .change() called." );
 	var country	=	$("#country_from").val();
-	alert(country);
+	if ( country == "") { 
+		$("#submit").attr('disabled', 'disabled'); 
+		$("#amount").attr('disabled', 'disabled'); 
+	}
 	$.ajax({
 		'type'	:	"POST",
 		'url'	:	"<?php echo base_url() . "index.php/user/country_values" ; ?>",
@@ -82,8 +87,81 @@ $('#country_from').change(function() {
 		'dataType' : 	"text",
 		
 		success : function (text, statut) {
-			alert('' +  text);
+			var res = text.split("&");
+			$("#send-money-sign").text(res[3]);
+			$("#country_to").removeAttr('disabled');
+			
+
+			if ( $("#country_from").val() != "" && $("#country_to").val() != "" )
+			{
+				$("#amount").removeAttr('disabled');				
+			}
+
+			if ( $("#country_from").val() != "" && $("#country_to").val() != "" && $("#amount").val() != "" )
+			{
+				$("#submit").removeAttr('disabled');				
+			}
 		},
 	});
 });
+
+$('#country_to').change(function() {
+        var country     =       $("#country_to").val();
+	if ( country == "" ) { 
+		$("#submit").attr('disabled', 'disabled'); 
+		$("#amount").attr('disabled', 'disabled');
+		return;
+	}
+        $.ajax({
+                'type'  :       "POST",
+                'url'   :       "<?php echo base_url() . "index.php/user/country_values" ; ?>",
+                'data'  :       'country=' +  country,
+                'dataType' :    "text",
+                
+                success : function (text, statut) {
+                        var res = text.split("&");
+                        $("#receive-money-sign").text(res[3]);
+			$("#amount").removeAttr('disabled');
+			if ( $("#country_from").val() != "" && $("#country_to").val() != "" && $("#amount").val() != "" )
+                        {
+                                $("#submit").removeAttr('disabled');
+                        }
+
+                },
+        });
+});
+
+
+$('#amount').bind("keyup", function() {
+        var amount      =       $("#amount").val();
+	var amount_int	= 	parseInt(amount);
+	if ( isNaN(amount_int) && amount != "") {
+		alert("Veuillez choisir un nombre !");
+		$("#submit").attr('disabled', 'disabled'); 
+		return;
+	}
+	if ( amount == "" ) {
+		$("#submit").attr('disabled', 'disabled'); 
+		return ; 
+	}
+	if ( !isNaN(amount_int) && amount_int != 0 )
+	{
+	        $.ajax({
+        	        'type'  :       "POST",
+                	'url'   :       "<?php echo base_url() . "index.php/user/amount_change/" ; ?>",
+	                'data'  :       'country_from=' + $("#country_from").val() + "&" + "country_to=" + $("#country_to").val() + "&amount=" + amount,
+        	        'dataType' :    "text",
+                
+	                success : function (text, statut) {
+				var res = text.split("&");
+                	        $("#amount_received").attr('value', res[0]);
+				$("#cost").html("<b>Nos Frais</b>: " + ((res[1]== 0) ? 2.50 : res[1]) + " " + res[2]);
+				$("#change").html("<b>Taux de change</b>: " + res[3]);
+				$("#submit").removeAttr('disabled');
+	                },
+        	});
+	} 
+});
+
+
 </script>

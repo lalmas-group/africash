@@ -3,10 +3,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient//">Destinataires</a></li>
-  			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient//">Destinataires</a></li>
+  			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 	
@@ -31,7 +30,6 @@
 			<table class="table table-hover">
 				<thead>
       					<tr>
-        					<th>#</th>
         					<th>Référence</th>
         					<th>Statut</th>
         					<th>Date</th>
@@ -44,13 +42,21 @@
     				<tbody>
 					<?php foreach ( $transferts as $transfert ) { ?>
 					<tr>
-						<td><?php echo $transfert->id; ?></td>
 						<td><?php echo strtoupper($transfert->reference); ?></td>
 						<td><?php echo show_state($transfert->state); ?></td>
 						<td><?php echo show_date($transfert->creation_date);?></td>
 						<td><?php echo $this->user_model->get_recipient_name($transfert->recipient); ?></td>
-						<td><?php echo $transfert->amount . " " .  $this->country_model->get_country_currency_sign($transfert->transfert_currency); ?></td>
-						<td>467 500 GNF</td>
+						<td><?php echo $transfert->amount . " " .  
+							$this->country_model->get_country_currency_sign($transfert->transfert_currency); ?></td>
+						<?php 
+						$change         =       $this->country_model->get_change(
+				                        $transfert->transfert_currency, 
+							$transfert->receive_currency);
+						?>
+						<td>
+							<?php echo number_format(intval($transfert->amount)*$change->amount) . " " .
+                                                        $this->country_model->get_country_currency_sign($transfert->receive_currency);?>
+						</td>
 						<td>
 							<a href="<?php echo base_url(). "index.php/user/summary/" . strtoupper($transfert->reference); ?>">
 								<button class="btn btn-default" title="Voir tous vos transferts à ce destinataire.">

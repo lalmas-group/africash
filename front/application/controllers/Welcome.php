@@ -37,7 +37,7 @@ class Welcome extends CI_Controller {
 		{
 			$this->session->sess_destroy(); 
 			$send_countries = $this->country_model->get_all_countries_send_money();
-			$receive_countries = $this->country_model->get_all_countries_send_receive();
+			$receive_countries = $this->country_model->get_all_countries_receive_money();
 			
 			$content  = $this->load->view('user/nc_home.php', array('send_countries' => $send_countries, 'receive_countries' => $receive_countries), TRUE);
 			$data 	  = array(
@@ -50,7 +50,7 @@ class Welcome extends CI_Controller {
 			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 3);
 			$recipients = $this->user_model->get_user_nb_recipients($this->session->userdata('user'), 0, 3);
 			$send_countries = $this->country_model->get_all_countries_send_money();
-			$receive_countries = $this->country_model->get_all_countries_send_receive();
+			$receive_countries = $this->country_model->get_all_countries_receive_money();
 			$data	  = array('error' => 'error', 'transferts' => $transferts, 'recipients' => $recipients, 
 					  'send_countries' => $send_countries, 'receive_countries' => $receive_countries); 
 			$content  = $this->load->view('user/c_home.php', $data , TRUE);

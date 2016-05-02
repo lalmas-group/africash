@@ -3,10 +3,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 	
@@ -32,7 +31,8 @@
 				
 					<div class="form-group has-error">
 						<label class="control-label" for="name">Nom</label>
-			  			<input type="text" class="form-control input-lg" placeholder="Votre nom" name="name" value="<?php echo set_value('name');?>"/>
+			  			<input type="text" class="form-control input-lg" placeholder="Votre nom" name="name" 
+							value="<?php echo set_value('name');?>"/>
 						<div class="control-label"><?php echo form_error('name');?></div>
   					</div>
 				<?php } else { ?>
@@ -82,10 +82,10 @@
 				
 					<div class="form-group has-error">
 						<label class="control-label" for="country">Pays</label><br/>
-						 <select class="form-control input-lg" style="width: 100%; " name="country">
-                                                        <option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+						<select class="form-control input-lg" style="width: 100%; " name="country" id="country">
+                                                        <option class="form-control input-lg" >Choisissez un pays</option><hr/>
                                                         <?php foreach ( $countries as $country ) {?>
-                                                                <option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+                                                                <option class="form-contol input-lg" value="<?php echo $country->id;?>">
                                                                         <?php echo $country->name; ?>
                                                                 </option><hr/>
                                                         <?php } ?>
@@ -99,10 +99,10 @@
 					?>
 						<div class="form-group has-success">
 							<label class="control-label" for="country">Pays</label><br/>
-							 <select class="form-control input-lg" style="width: 100%; " name="country">
-                                                        <option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
+							<select class="form-control input-lg" style="width: 100%; " name="country" id="country">
+                                                        <option class="form-control input-lg" value="<?php echo set_select('country', '', TRUE); ?>">Choisissez un pays</option><hr/>
                                                         <?php foreach ( $countries as $country ) {?>
-                                                                <option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+                                                                <option class="form-contol input-lg" value="<?php echo $country->id;?>">
                                                                         <?php echo $country->name; ?>
                                                                 </option><hr/>
                                                         <?php } ?>
@@ -112,10 +112,10 @@
 					<?php } else { ?>
 						<div class="form-group">
 							<label class="control-label" for="country">Pays</label><br/>
-							 <select class="form-control input-lg" style="width: 100%; " name="country">
+							<select class="form-control input-lg" style="width: 100%; " name="country" id="country">
                                                         <option class="form-control input-lg" value="" <?php echo set_select('country', '', TRUE); ?>>Choisissez un pays</option><hr/>
                                                         <?php foreach ( $countries as $country ) {?>
-                                                                <option class="form-contol input-lg" value="<?php echo $country->id;?>" selected="<?php echo (($this->input->post('country') == $country->id) ? "selected" : "");?>">
+                                                                <option class="form-contol input-lg" value="<?php echo $country->id; ?>">
                                                                         <?php echo $country->name; ?>
                                                                 </option><hr/>
                                                         <?php } ?>
@@ -134,8 +134,7 @@
 					<div class="form-group has-error">
 						<label class="control-label" for="phone_number">Numéro de téléphone: </label><br/>
 		    				<div class="input-group">
-      							<div class="input-group-addon btn-primary" style="color: white; ">
-								0033
+      							<div class="input-group-addon btn-primary" style="color: white;" id="country-phone-code">
 							</div>
       							<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" value="<?php echo set_value('phone_number');?>">
 						</div>
@@ -148,8 +147,7 @@
 					<div class="form-group has-success">
 						<label class="control-label" for="phone_number">Numéro de téléphone: </label><br/>
 						<div class="input-group">
-      							<div class="input-group-addon btn-primary" style="color: white; ">
-								0033
+      							<div class="input-group-addon btn-primary" style="color: white;" id="country-phone-code">
 							</div>
 		      					<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" value="<?php echo set_value('phone_number');?>">
     						</div>
@@ -158,8 +156,8 @@
 					<div class="form-group">
 						<label class="control-label" for="phone_number">Numéro de téléphone: </label><br/>
     						<div class="input-group">
-	      						<div class="input-group-addon btn-primary" style="color: white; ">
-								0033
+	      						<div class="input-group-addon btn-primary" style="color: white;" id="country-phone-code">
+							
 							</div>
 	      					<input type="text" class="form-control input-lg" id=phone_number" name="phone_number" placeholder="650535637" value="<?php echo set_value('phone_number');?>">
     						</div>
@@ -174,3 +172,20 @@
     		</div>
   	</div>
 </div>
+
+<script>
+$('#country').change(function() {
+        var country     =       $("#country").val();
+        $.ajax({
+                'type'  :       "POST",
+                'url'   :       "<?php echo base_url() . "index.php/user/country_values" ; ?>",
+                'data'  :       'country=' +  country,
+                'dataType' :    "text",
+                
+                success : function (text, statut) {
+                        var res = text.split("&");
+                        $("#country-phone-code").text(res[1]);
+                },
+        });
+});
+</script>

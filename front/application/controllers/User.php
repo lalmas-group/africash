@@ -183,7 +183,9 @@ class User extends CI_Controller {
 		if ($this->form_validation->run() == FALSE)
 		{
 			$countries = $this->country_model->get_all_countries_send_money();
-			$content  = $this->load->view('user/registration.php', array('countries' => $countries), TRUE);
+			$phone_code = $this->country_model->get_country_code($country);
+			$content  = $this->load->view('user/registration.php', 
+			array('countries' => $countries, 'phone_code' => $phone_code), TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- Inscrivez vous!"
@@ -411,8 +413,9 @@ class User extends CI_Controller {
 				return;
 			}
 			else if ($onglet == "new" ) {
+				$recipient_object = $this->user_model->get_recipient($recipient);
 				$content  = $this->load->view('user/c_transfert_create.php', 
-					array ('status'	=> '', 'recipient' => $recipient), TRUE);
+					array ('status'	=> '', 'recipient' => $recipient, 'recipient_object' => $recipient_object), TRUE);
 				$data 	  = array(
 					'content'	=>	$content,
 					'title'		=>	"Africash -- "
@@ -515,8 +518,21 @@ class User extends CI_Controller {
 		}
 		$transfert = $this->user_model->get_transfert_by_reference($reference);
 		$recipient = $this->user_model->get_transfert_recipient_by_reference($reference); 
+		$cost		=	(round(intval($transfert->amount)/50)*2.50); 
+		$change         =       $this->country_model->get_change(
+                        $transfert->transfert_currency, $transfert->receive_currency);
+		$send_currency	=	$this->country_model->get_country_currency_sign($transfert->transfert_currency);
+		$receive_currency	=	$this->country_model->get_country_currency_sign($transfert->receive_currency);
 		$content  = $this->load->view('user/c_transfert_summary.php', 
-			array ('status'	=> '', 'transfert' => $transfert, 'recipient' => $recipient), TRUE);
+			array ( 'status'		=> '', 
+				'transfert'		=> $transfert, 
+				'recipient' 		=> $recipient, 
+				'change' 		=> $change, 
+				'send_currency'		=> $send_currency, 
+				'receive_currency' 	=> $receive_currency, 
+				'cost' 			=> $cost
+			), 
+		TRUE);
 		$data 	  = array(
 			'content'	=>	$content,
 			'title'		=>	"Africash -- "
@@ -566,7 +582,7 @@ class User extends CI_Controller {
 				));
 				if ($this->form_validation->run() == FALSE)
 				{
-					$countries	=	$this->country_model->get_all_countries_send_receive();
+					$countries	=	$this->country_model->get_all_countries_receive_money();
 					$data 	  = array(
 						'countries'	=>	$countries,
 						'error'	=>	"",
@@ -871,7 +887,23 @@ class User extends CI_Controller {
 		$country	=	xss_clean($this->input->post('country'));
 		$count		=	$this->country_model->get_country($country); 
 		$currency	=	$this->country_model->get_country_currency_sign($country);
-		echo $count->id . "&" . $count->phone_code . "&" . $currency; 		
+		$currency_sn	=	$this->country_model->get_country_currency_short_name($country);
+		echo $count->id . "&" . $count->phone_code . "&" . $currency . "&" . $currency_sn; 		
+	}
+	
+
+
+	public function amount_change()
+	{
+		$country_from	=	xss_clean($this->input->post('country_from'));
+		$country_to	=	xss_clean($this->input->post('country_to'));
+		$amount_st		=	xss_clean($this->input->post('amount'));
+		$change		=	$this->country_model->get_change(
+			$this->country_model->get_country_currency($country_from), $this->country_model->get_country_currency($country_to));	
+		$amount 	= 	(intval($change->amount) * intval($amount_st)); 	
+		$cost		=	(round(intval($amount_st)/50)*2.50); 
+		$currency_sn	=	$this->country_model->get_country_currency_sign($country_from);
+		echo number_format($amount) . "&" . $cost  . "&" . $currency_sn . "&" . $change->amount;	
 	}
 
 }

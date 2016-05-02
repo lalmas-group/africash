@@ -20,6 +20,7 @@
 		  <link href="<?php echo base_url() ; ?>vendor/gentelella/production/css/icheck/flat/green.css" rel="stylesheet">
 		  <link href="<?php echo base_url() ; ?>vendor/gentelella/production/css/datatables/tools/css/dataTables.tableTools.css" rel="stylesheet">
 
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	    	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	    	<!--[if lt IE 9]>
@@ -67,12 +68,12 @@
         						<li class="dropdown">
 	          						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
 								aria-expanded="false">
-									Moncompte
+									Mon compte
 								</a>
           							<ul class="dropdown-menu" role="menu">
-            								<li><a href="#">Action</a></li>
-            								<li><a href="#">Another action</a></li>
-            								<li><a href="#">Something else here</a></li>
+            								<li><a href="<?php echo base_url();?>">Tableau de bord</a></li>
+            								<li class="divider"></li>
+            								<li><a href="#">Aide</a></li>
             								<li class="divider"></li>
 	            							<li><a href="<?php echo base_url(); ?>index.php/user/deconnexion/">Deconnexion</a></li>
         	  						</ul>

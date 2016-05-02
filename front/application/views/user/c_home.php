@@ -3,10 +3,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 	<br/><br/>	
@@ -35,7 +34,15 @@
 								<td><?php echo $this->user_model->get_recipient_name($transfert->recipient); ?></td>
 								<td><?php echo $transfert->amount . " " .  
 									$this->country_model->get_country_currency_sign($transfert->transfert_currency); ?></td>
-								<td>467 500 GNF</td>
+								<?php
+			                                                $change         =       $this->country_model->get_change(
+                        			                                $transfert->transfert_currency,
+                                                			        $transfert->receive_currency);
+		                                                ?>
+                		                                <td>
+                                	                	        <?php echo number_format(intval($transfert->amount)*$change->amount) . " " .
+                                          		              $this->country_model->get_country_currency_sign($transfert->receive_currency);?>
+		                                                </td>  
 								<td>
 									<a href="<?php echo base_url(). "index.php/user/summary/" . strtoupper($transfert->reference); ?>">
 										<button class="btn btn-default" title="Voir tous vos transferts à ce destinataire.">
@@ -49,7 +56,9 @@
   				</table>
 			</div>
 			<div style="float: right;">
-				<button  class="btn btn-primary" >VOIR TOUS VOS TRANSFERTS</button>
+				<a href="<?php echo base_url() . "index.php/user/transfert/"; ?>">
+					<button  class="btn btn-primary" >VOIR TOUS VOS TRANSFERTS</button>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -77,7 +86,6 @@
 				<table class="table">
 					<thead>
       						<tr>
-        						<th>#</th>
         						<th>Prénom(s)</th>
         						<th>Nom</th>
         						<th>Pays</th>
@@ -88,7 +96,6 @@
     					<tbody>
 						<?php foreach ( $recipients as $recipient ) { ?>
 						<tr>
-							<td><?php echo $recipient->id; ?></td>
 							<td><?php echo $recipient->firstname; ?></td>
 							<td><?php echo $recipient->name; ?></td>
 							<td><?php echo $this->country_model->get_country_name($recipient->country); ?></td>
@@ -109,7 +116,9 @@
   				</table>
 			</div>
 			<div style="float: right;">
-				<button  class="btn btn-primary" >VOIR TOUS VOS DESTINATAIRES</button>
+				<a href="<?php echo base_url() . "index.php/user/recipient/"; ?>">
+					<button  class="btn btn-primary" >VOIR TOUS VOS DESTINATAIRES</button>
+				</a>
 			</div>
 		</div>
 	<div>
@@ -127,6 +136,6 @@
 	<?php } ?>
 </div>
 
-
+<br/><br/>
 
 

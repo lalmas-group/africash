@@ -2,10 +2,9 @@
 <div class="container">
 	<div class="row">
 		<ul class="nav nav-tabs ">
-  			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>">Accueil</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
-  			<li role="presentation" class="active col-md-3"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
-			<li role="presentation" class="col-md-3"><a href="<?php echo base_url(); ?>index.php/user/account/">Mon compte</a></li>			
+  			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>">Accueil</a></li>
+			<li role="presentation" class="col-md-4"><a href="<?php echo base_url(); ?>index.php/user/recipient/">Destinataires</a></li>
+  			<li role="presentation" class="active col-md-4"><a href="<?php echo base_url(); ?>index.php/user/transfert/">Transferts</a></li>
 		</ul>
 	</div>
 
@@ -68,8 +67,10 @@
 					<p style="margin-left: 40px; margin-right: 40px;">
 						Ce transfert a été reglé, votre destinataire va recevoir les fonds très bientôt.  
 					</p>
-					<?php } else { ?>
-						<a href="">
+					<br/>
+					<?php } else if ( $transfert->state != "CANCEL" ) { ?>
+						<a href="<?php echo base_url() . "index.php/user/paiement/bank_card/" . 
+							$transfert->reference?>">
 							<button class="btn btn-primary" style="width: 100%; ">Reglement par carte de crédit</button>
 						</a>				
 					<?php } ?>
@@ -87,10 +88,13 @@
 
 					<p style="margin-left: 40px; margin-right: 40px;">
 						Reference du retrait: <b><?php echo strtoupper($transfert->reference); ?></b><br/>
-						Montant transféré   : <b><?php echo $transfert->amount . " " .  $this->country_model->get_country_currency_sign($transfert->transfert_currency); ?></b><br/>
-						Montant à recevoir  : <b>467 500 GNF</b><br/>
-						Nos frais  : <b>2,50 €</b><br/>
-						Montant total :  <b>52,50 €</b><br/><br/>
+						Montant transféré   : <b><?php echo $transfert->amount . " " .  $send_currency; ?></b><br/>
+						Montant à recevoir  : <b>
+						<?php echo number_format(intval($transfert->amount)*$change->amount) . " " . 
+							$receive_currency; ?>
+							</b><br/>
+						Nos frais  : <b><?php echo $cost ; ?> €</b><br/>
+						Montant total :  <b><?php echo (intval($transfert->amount)+$cost)?> €</b><br/><br/>
 							Veuillez renseigner le vrai numéro de votre destinataire, sinon il rique de ne pas recevoir votre transfert. 
 					</p><br/>
 
