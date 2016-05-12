@@ -69,7 +69,7 @@
 			<h3>Vos bénéficiaires</h3>
 			<hr/>
 			<p style="margin: 50px; "> Vous n'avez aucun bénéficiare.</p>
-			<a href="" style="margin: 50px; ">
+			<a href="<?php echo base_url(); ?>index.php/user/recipient/create/" style="margin: 50px; ">
 				<button  class="btn btn-primary" >CREER UN BENEFICIARE</button>
 			</a>
 		</div>

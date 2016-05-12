@@ -34,10 +34,11 @@
 					</p><br/>
 					<h4 style="margin: 20px;"> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Compte bancaire Africash</h4>
 					<hr/ style="margin-left:20px; margin-right:20px;">
+					<br/>
 
-					<table class="table table-responsive borderless" style="margin: 40px; border: 0;">
-						<tr style="border: none;">
-							<td>Prenom: </td>
+					<table class="table table-responsive" style="border: 0;">
+						<tr>
+							<td style="margin: 40px;">Prenom: </td>
 							<td>Africash Inc: </td>
 						</tr>
 						<tr>
@@ -90,17 +91,22 @@
 						Reference du retrait: <b><?php echo strtoupper($transfert->reference); ?></b><br/>
 						Montant transféré   : <b><?php echo $transfert->amount . " " .  $send_currency; ?></b><br/>
 						Montant à recevoir  : <b>
-						<?php echo number_format(intval($transfert->amount)*$change->amount) . " " . 
+						<?php echo number_format(
+							((intval($transfert->amount)*$change->amount)-$transfert_cost)) . " " .
 							$receive_currency; ?>
 							</b><br/>
-						Nos frais  : <b><?php echo $cost ; ?> €</b><br/>
-						Montant total :  <b><?php echo (intval($transfert->amount)+$cost)?> €</b><br/><br/>
-							Veuillez renseigner le vrai numéro de votre destinataire, sinon il rique de ne pas recevoir votre transfert. 
+						Nos frais  : <b><?php echo $cost . " " . $send_currency; ?></b><br/>
+						Frais de transfert  : <b><?php echo $transfert_cost . " " . $receive_currency;?></b><br/>
+						Montant total :  <b><?php echo (intval($transfert->amount)+$cost) . " " . 
+							$send_currency?></b><br/><br/>
+							Veuillez renseigner le vrai numéro de votre destinataire, 
+							sinon il rique de ne pas recevoir votre transfert. 
 					</p><br/>
 
 					<h4 style="margin: 20px"> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Adresse à créditer</h4>
 					<hr/ style="margin: 20px;">
-					<table class="table table-responsive borderless" style="margin: 40px; border: 0;">
+					<br/>
+					<table class="table table-responsive" >
 						<tr style="border: none;">
 							<td>Prenom: </td>
 							<td><?php echo $recipient->firstname; ?></td>

@@ -35,13 +35,17 @@
 								<td><?php echo $transfert->amount . " " .  
 									$this->country_model->get_country_currency_sign($transfert->transfert_currency); ?></td>
 								<?php
+									$transfert_cost = 	$this->country_model->
+										get_country_transfert_cost($transfert->receive_currency);
 			                                                $change         =       $this->country_model->get_change(
                         			                                $transfert->transfert_currency,
                                                 			        $transfert->receive_currency);
 		                                                ?>
                 		                                <td>
-                                	                	        <?php echo number_format(intval($transfert->amount)*$change->amount) . " " .
-                                          		              $this->country_model->get_country_currency_sign($transfert->receive_currency);?>
+                                	                	        <?php echo number_format(
+										(intval($transfert->amount)*$change->amount)-$transfert_cost) . " " .
+                                          		              		$this->country_model->get_country_currency_sign(
+										$transfert->receive_currency);?>
 		                                                </td>  
 								<td>
 									<a href="<?php echo base_url(). "index.php/user/summary/" . strtoupper($transfert->reference); ?>">

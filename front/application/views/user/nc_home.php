@@ -12,7 +12,7 @@
 		<h3 style="text-align: center;">Simulez votre transfert</h3>
 		<hr/>
 		<br/>
-		<form method="" action="">
+		<form action="<?php echo base_url() ; ?>index.php/user/simulator/connexion/" method="post">
 			<label for="country_from">De:</label><br/>
 			<select class="form-control input-lg" style="width: 100%; " name="country_from" id="country_from">
                         	<option class="form-control input-lg" value="" <?php echo set_select('country_from', '', TRUE); ?>>Votre pays</option><hr/>
@@ -59,13 +59,12 @@
     				</div>
   			</div>
 			<!--<input type="text" name="amount_received" id="amount_received" class="form-control input-lg " placeholder="0.00"/>-->
-			<br/><br/>
 			<p id="cost"></p>
 			<p id="change"></p>
-			<br/>
+			<p id="transfert_cost"></p>
 			<br/><br/>
 			<button disabled="disabled" style="float: center; " type="submit" class="btn btn-success" style="color: yellow; " id="submit">Envoyez de l'argent</button>
-			<br/><br/>
+			<br/>
 			
 		</form>
 	</div>
@@ -156,7 +155,8 @@ $('#amount').bind("keyup", function() {
 				var res = text.split("&");
                 	        $("#amount_received").attr('value', res[0]);
 				$("#cost").html("<b>Nos Frais</b>: " + ((res[1]== 0) ? 2.50 : res[1]) + " " + res[2]);
-				$("#change").html("<b>Taux de change</b>: " + res[3]);
+				$("#change").html("<b>Taux de change</b>: " + res[3] + " " + res[5]);
+				$("#transfert_cost").html("<b>Frais de transfert</b>: " + res[4] + " " + res[5]);
 				$("#submit").removeAttr('disabled');
 	                },
         	});

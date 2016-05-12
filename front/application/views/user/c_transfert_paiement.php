@@ -19,7 +19,10 @@
 
 				<br/>
 
-				<p style="text-color: green; margin: 10px; font-size: 18px; line-height: 24px;">Créditez votre ordre de transfert dnas les 24h en nous versant 55 € (total_amount) sur notre compte bancaire grâce à votre service bancaire en ligne de votre banque..</p>
+				<p style="text-color: green; margin: 10px; font-size: 18px; line-height: 24px;">Créditez votre ordre de transfert dnas les 24h en nous versant 
+				<?php echo (($cost == 0) ? (intval($amount)+2.50) : ((intval($amount)+$cost))); ?>
+				 <?php echo $this->country_model->get_country_currency_sign($transfert->transfert_currency); ?>
+				sur notre compte bancaire grâce à votre service bancaire en ligne de votre banque..</p>
 					
 				
 

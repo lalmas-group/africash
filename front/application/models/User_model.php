@@ -73,12 +73,13 @@ class User_model extends CI_Model
 	{
 		$this->db->trans_start(); 
 			$this->db->insert('recipient', $data); 
+			$id = $this->db->insert_id();
 		$this->db->trans_complete(); 
 		if ($this->db->trans_status() === FALSE)
 		{
 			return 0; 
 		}else {
-			return 1; 
+			return $id; 
 		}
 	}
 	

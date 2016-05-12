@@ -2,7 +2,7 @@
 <div class="container">
 <div class="row" style="margin: 10px; ">
 	<div class="col-md-6 col-md-offset-1 col-lg-6 col-lg-offset-1">
-		<form method="post" action="<?php echo base_url(); ?>index.php/user/register">
+		<form method="post" action="<?php echo base_url(); ?>index.php/user/simulator/register/">
 			<h3><b>Vos infos de connexion</b></h3>
 			<br/>
 

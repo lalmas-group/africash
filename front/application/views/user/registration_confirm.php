@@ -11,11 +11,8 @@
 
 				<br/><br/>
 				<div class="row">
-					<a href="" style="float: left; ">
+					<a href="<?php echo base_url() ; ?>index.php/user/recipient/" style="float: left; ">
 						<button type="submit" class="btn btn-primary" style="width: 100%; ">Faire mon premier transfert</button>
-					</a>
-					<a href="" style="float: right; ">
-						<button type="submit" class="btn btn-primary" style="width: 100%; ">Voir mon profil</button>
 					</a>
 				</div>				
 

@@ -41,6 +41,19 @@ class Country_model extends CI_Model
 		$query	=	$query[0]; 
 		return $query->name; 
 	}
+	
+
+	public function get_country_regex($country)
+	{
+		$query	=	"select regex from country where id = '$country';"; 
+		$query	=	$this->db->query($query); 
+		$query	=	$query->result(); 
+		$query	=	$query[0]; 
+		return $query->regex; 
+	}
+
+
+	
 	public function get_country_currency($country)
 	{
 		$query	=	"select currency from country where id = '$country';"; 
@@ -48,6 +61,17 @@ class Country_model extends CI_Model
 		$query	=	$query->result(); 
 		$query	=	$query[0]; 
 		return $query->currency; 
+	}
+	
+
+
+	public function get_country_transfert_cost($country)
+	{
+		$query	=	"select amount from country_transfert_cost where country = '$country';"; 
+		$query	=	$this->db->query($query); 
+		$query	=	$query->result(); 
+		$query	=	$query[0]; 
+		return $query->amount; 
 	}
 	
 	public function get_country_currency_sign($country)

@@ -53,7 +53,8 @@ class User extends CI_Controller {
 		}else
 		{
 			$transferts = $this->user_model->get_user_nb_transferts($this->session->userdata('user'), 0, 3);
-			$data	  = array('error' => 'error', 'transferts' => $transferts); 
+			$recipients = $this->user_model->get_user_nb_recipients($this->session->userdata('user'), 0, 3);
+			$data	  = array('error' => 'error', 'transferts' => $transferts, 'recipients' => $recipients); 
 			$content  = $this->load->view('user/c_home.php', $data , TRUE);
 			$data 	  = array(
 				'content'	=>	$content,
@@ -64,6 +65,108 @@ class User extends CI_Controller {
 		}
 	}
 
+	public function simulator($step=null)
+	{
+		if ( $step == "connexion" ) {
+			if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
+			{
+				$this->session->set_userdata('simulator_amount', xss_clean($this->input->post('amount')));
+				$this->session->set_userdata('simulator_country_from', xss_clean($this->input->post('country_from')));
+				$this->session->set_userdata('simulator_country_to', xss_clean($this->input->post('country_to')));
+
+				$data	  = array('error' => ''); 			
+				$content  = $this->load->view('user/simulator_login.php', $data , TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- Envoyez de l'aregent à vos proches en un click"
+				); 
+				$this->load->view('templates/nc_template.php', $data); 
+				return; 
+			}
+		}
+			
+
+		if ( $step == "registration" ) {
+			if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
+			{
+				$countries = $this->country_model->get_all_countries_send_money();
+				$content  = $this->load->view('user/simulator_registration.php', array('countries' => $countries), TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- Inscrivez vous!"
+				); 
+				$this->load->view('templates/nc_template.php', $data); 
+				return; 
+			}
+		}	
+		if ( $step == "register" ) {
+			if ( ($this->session->userdata('user') == null )&& ($this->session->userdata('type') != "AFRICASH-USER")) 
+			{
+				$this->_treat_registration("simulator_");
+			}
+		}
+			
+		if ( $step == "recipient" ) {
+			$this->_treat_recipient_create("simulator_");
+		}
+				
+		if ( $step == "connect" ) {
+			$this->load->library('form_validation');
+				$this->load->helper('security');
+		
+				$email		=	xss_clean($this->input->post('email', TRUE));
+				$password	=	xss_clean($this->input->post('password', TRUE));
+		
+				print_r($this->session->userdata()); 	
+				$this->form_validation->set_rules('email', 'L\'adresse email', 'trim|required|valid_email', 
+	 				array('required'	=>	'%s ne peut pas être vide.',
+	  			      'valid_email'	=>	'%s doit être du bon format d\'email.'));
+	 
+				$this->form_validation->set_rules('password', 'Le mot de passe', 'trim|required|min_length[8]', 
+					array('required'	=>	'%s ne peut pas être vide.',
+					'min_length'		=>	'%s doit contenir au moins %s caractères.'
+				));
+		
+
+				if ($this->form_validation->run() == FALSE)
+				{
+					$data	  = array('error' => ''); 
+					$content  = $this->load->view('user/simulator_login.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Envoyez de l'aregent à vos proches en un click"
+					); 
+					$this->load->view('templates/nc_template.php', $data); 
+					return; 
+				}
+				$password	=	hash('sha512', $password);
+				if ( $this->user_model->exists($email, $password) == TRUE) 
+				{
+					$this->_create_session($email, $password); 
+					
+
+					$recipients = $this->user_model->get_user_recipients($this->session->userdata('user')); 
+					$data	  = array('error' => '', 'datas' => $this->input->post(), 'recipients' => $recipients); 
+					$content  = $this->load->view('user/simulator_transfert_recipient_choose.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Envoyez de l'aregent à vos proches en un click"
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return; 
+				}else {
+					$data	  = array('error' => 'error'); 
+					$content  = $this->load->view('user/simulator_login.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Connexion"
+					); 
+					$this->load->view('templates/nc_template.php', $data); 
+					return; 
+				}
+			}
+
+	}
 	/**
 		Affiche lapage d'incription seulemùent. Sans traiter le formulaire.
 	*/	
@@ -128,110 +231,7 @@ class User extends CI_Controller {
 		{
 			redirect ('/', 'location'); 
 		}
-		$this->load->library('form_validation');
-		$this->load->helper('security');
-		
-		$email		=	xss_clean($this->input->post('email', TRUE));
-		$password	=	xss_clean($this->input->post('password', TRUE));
-		$password_conf	=	xss_clean($this->input->post('password_conf', TRUE));
-
-		$name		=	xss_clean($this->input->post('name', TRUE));
-		$firstname	=	xss_clean($this->input->post('firstname', TRUE));
-
-		$country	=	xss_clean($this->input->post('country', TRUE));
-		$address	=	xss_clean($this->input->post('address', TRUE));
-		$line2		=	xss_clean($this->input->post('address_line2', TRUE));
-		$town		=	xss_clean($this->input->post('town', TRUE));
-		$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
-
-		$this->form_validation->set_rules('email', 'L\'adresse email', 'trim|required|valid_email|is_unique[customer.email]', 
-			array('required'	=>	'%s ne peut pas être vide.',
-			      'is_unique'	=>	'%s que vous avez choisie est déjà utilisé',
-			      'valid_email'	=>	'%s doit être du bon format d\'email.'));
-		$this->form_validation->set_rules('password', 'Le mot de passe', 'trim|required|min_length[8]', 
-			array('required'	=>	'%s ne peut pas être vide.',
-			'min_length'		=>	'%s doit contenir au moins %s caractères.'
-		));
-		$this->form_validation->set_rules('password_conf', 'La confirmation du mot de passe', 'trim|matches[password]|required', 
-			array('matches'		=>	'Les deux mot de passe ne sont pas équivalent.',				      
-			'required'	=>	'%s ne peut pas être vide.',				      
-		));
-		$this->form_validation->set_rules('name', 'Le nom de famille', 'trim|required|min_length[2]',
-			array('required'	=>	'%s ne peut pas être vide.',				      
-			'min_length'		=>	'%s doit contenir au moins %s caractères.'
-		));
-		$this->form_validation->set_rules('firstname', 'Le prénom', 'trim|required|min_length[2]',
-			array('required'	=>	'%s ne peut pas être vide.',				      
-			'min_length'		=>	'%s doit contenir au moins %s caractères.'
-		));
-		$this->form_validation->set_rules('country', 'Le pays d\'adresse', 'trim|required',
-			array('required'	=>	'%s ne peut pas être vide.',				      
-			'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
-		));
-		/*$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
-			array('required'	=>	'%s ne peut pas être vide.',				      
-		));*/
-		$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
-			'trim|required|numeric|callback_validate_phone_number',
-			array('required'	=>	'%s ne peut pas être vide.',				      
-			'numeric'		=>	'%s doit contenir que des chiffres.',				      
-			'validate_phone_number'		=>	'%s est déjà utilisé.',
-		));
-		$this->form_validation->set_rules('address', 'L\'adresse ', 'trim|required',
-			array('required'	=>	'%s ne peut pas être vide.',				      
-		));
-		if ($this->form_validation->run() == FALSE)
-		{
-			$countries = $this->country_model->get_all_countries_send_money();
-			$phone_code = $this->country_model->get_country_code($country);
-			$content  = $this->load->view('user/registration.php', 
-			array('countries' => $countries, 'phone_code' => $phone_code), TRUE);
-			$data 	  = array(
-				'content'	=>	$content,
-				'title'		=>	"Africash -- Inscrivez vous!"
-			); 
-			$this->load->view('templates/nc_template.php', $data); 
-		}
-		else
-		{
-			$password	=	hash('sha512', $password);
-			// All data's correct
-			$data 	=	array (
-				'email'		=>	$email, 
-				'password'	=>	$password, 
-				'name'		=>	$name, 
-				'firstname'	=>	$firstname, 
-				'address'	=>	$address, 
-				'country'		=>	$country, 				
-				'phone_number'	=>	$phone_number
-			); 
-			if ( $this->user_model->create_user($data) == 0 ) 
-			{
-				$data 	  = array(
-					'status'	=>	"error",
-				); 
-				$content  = $this->load->view('user/registration_confirm.php', $data , TRUE);
-				$data 	  = array(
-					'content'	=>	$content,
-					'title'		=>	"Africash -- Confirmation d'inscription"
-				); 
-				$this->load->view('templates/nc_template.php', $data); 
-				return;
-			}
-			else
-			{
-				$data 	  = array(
-					'status'	=>	"success",
-				); 
-				$content  = $this->load->view('user/registration_confirm.php', $data , TRUE);
-				$data 	  = array(
-					'content'	=>	$content,
-					'title'		=>	"Africash -- Confirmation d'inscription"
-				); 
-				$this->load->view('templates/nc_template.php', $data); 
-				return;
-			}
-		}
+		$this->_treat_registration("");
 
 	}
 	
@@ -298,7 +298,7 @@ class User extends CI_Controller {
                 $this->session->set_userdata('type', "AFRICASH-USER");
                 $this->session->set_userdata('user', $customer->id);
                 $this->session->set_userdata('name', $customer->name);
-                $this->session->set_userdata('first_name', $customer->first_name);
+                $this->session->set_userdata('first_name', $customer->firstname);
                 $this->session->set_userdata('email', $customer->email);
                 $this->session->set_userdata('adress', $customer->address);
                 $this->session->set_userdata('pasword', $customer->password);
@@ -371,9 +371,15 @@ class User extends CI_Controller {
 		}
 		if ( $type == "bank_transfer" )
 		{
+			$transfert	=	$this->user_model->get_transfert_by_reference($reference);
+			$change		=	$this->country_model->get_change(
+						$transfert->transfert_currency, $transfert->receive_currency);	
+			$amount 	= 	$transfert->amount; 	
+			$cost		=	(round(intval($amount)/50)*2.50); 
+
 			$id	  = $this->user_model->get_transfert_id_by_reference($reference); 
 			$content  = $this->load->view('user/c_transfert_paiement.php', 
-				array ('status'    => 'success', 'reference' => $reference), TRUE);		
+				array ('status'    => 'success', 'reference' => $reference, 'id' => $id, 'amount' => $amount, 'cost' => $cost, 'transfert' => $transfert), TRUE);		
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- "
@@ -383,9 +389,15 @@ class User extends CI_Controller {
 		}
 		if ( $type == "bank_card" )
 		{
+			$transfert	=	$this->user_model->get_transfert_by_reference($reference);
+			$change		=	$this->country_model->get_change(
+						$transfert->transfert_currency, $transfert->receive_currency);	
+			$amount 	= 	$transfert->amount; 	
+			$cost		=	(round(intval($amount)/50)*2.50); 
+			
 			$id	  = $this->user_model->get_transfert_id_by_reference(strtolower($reference)); 
 			$content  = $this->load->view('user/c_card_paiement.php', 
-				array ('status'    => 'success', 'reference' => $reference, 'id' => $id), TRUE);		
+				array ('status'    => 'success', 'reference' => $reference, 'id' => $id, 'amount' => $amount, 'cost' => $cost, 'transfert' => $transfert), TRUE);		
 			$data 	  = array(
 				'content'	=>	$content,
 				'title'		=>	"Africash -- "
@@ -519,6 +531,7 @@ class User extends CI_Controller {
 		$transfert = $this->user_model->get_transfert_by_reference($reference);
 		$recipient = $this->user_model->get_transfert_recipient_by_reference($reference); 
 		$cost		=	(round(intval($transfert->amount)/50)*2.50); 
+		$transfert_cost = 	$this->country_model->get_country_transfert_cost($recipient->country);
 		$change         =       $this->country_model->get_change(
                         $transfert->transfert_currency, $transfert->receive_currency);
 		$send_currency	=	$this->country_model->get_country_currency_sign($transfert->transfert_currency);
@@ -530,6 +543,7 @@ class User extends CI_Controller {
 				'change' 		=> $change, 
 				'send_currency'		=> $send_currency, 
 				'receive_currency' 	=> $receive_currency, 
+				'transfert_cost' 	=> $transfert_cost, 
 				'cost' 			=> $cost
 			), 
 		TRUE);
@@ -555,103 +569,18 @@ class User extends CI_Controller {
 			/* Traitement du formulaire*/
 			if ( $onglet == "create" ) 
 			{ 
-				$this->load->library('form_validation');
-				$this->load->helper('security');
-
-
-				$this->form_validation->set_rules('name', 'Le nom de famille', 'trim|required|min_length[2]',
-					array('required'	=>	'%s ne peut pas être vide.',				      
-					'min_length'		=>	'%s doit contenir au moins %s caractères.'
-				));	
-				$this->form_validation->set_rules('firstname', 'Le prénom', 'trim|required|min_length[2]',
-					array('required'	=>	'%s ne peut pas être vide.',				      
-					'min_length'		=>	'%s doit contenir au moins %s caractères.'
-				));
-				$this->form_validation->set_rules('country', 'Le pays d\'adresse', 'trim|required',
-					array('required'	=>	'%s ne peut pas être vide.',				      
-					'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
-				));	
-/*				$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
-					array('required'	=>	'%s ne peut pas être vide.',				      
-				));	*/
-				$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
-					'trim|required|numeric|callback_validate_phone_number_recipient',
-					array('required'	=>	'%s ne peut pas être vide.',				      
-					'numeric'		=>	'%s doit contenir que des chiffres.',				      
-					'validate_phone_number_recipient'		=>	'%s est déjà utilisé.',
-				));
-				if ($this->form_validation->run() == FALSE)
-				{
-					$countries	=	$this->country_model->get_all_countries_receive_money();
-					$data 	  = array(
-						'countries'	=>	$countries,
-						'error'	=>	"",
-					); 
-					// Formulaire mal rempli
-					$content  = $this->load->view('user/c_recipient_create.php', $data, TRUE);
-					$data 	  = array(
-						'content'	=>	$content,
-						'title'		=>	"Africash -- Inscrivez vous!"
-					); 
-					$this->load->view('templates/c_template.php', $data); 
-				}
-				else {
-					// Formulaire bien rempli
-
-					$name		=	xss_clean($this->input->post('name', TRUE));
-					$firstname	=	xss_clean($this->input->post('firstname', TRUE));
-
-					$country	=	xss_clean($this->input->post('country', TRUE));
-					$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
-
-
-					
-					$data 	=	array (
-						'customer'	=>	$this->session->userdata('user'),
-						'name'		=>	$name, 
-						'firstname'	=>	$firstname, 
-						'country'		=>	$country, 				
-						'phone_number'	=>	$phone_number
-					); 
-					//  création du recipient
-					if ( $this->user_model->create_recipient($data) == 0 ) 
-					{
-						// On ne peut pas créer le recipient, numéro déjà utilisé pour un autre recipient, ou transaction annulé
-						$data 	  = array(
-							'status'	=>	"error",
-						); 
-						$content  = $this->load->view('user/recipient_create_confirm.php', $data , TRUE);
-						$data 	  = array(
-							'content'	=>	$content,
-							'title'		=>	"Africash -- Confirmation de création de votre destinataire."
-						); 
-						$this->load->view('templates/c_template.php', $data); 
-						return;															
-					}	
-					else	
-					{
-						// Le recipient a bien été enregistré
-						$data 	  = array(
-							'status'	=>	"success",
-						); 
-						$content  = $this->load->view('user/recipient_create_confirm.php', $data , TRUE);
-						$data 	  = array(
-							'content'	=>	$content,
-							'title'		=>	"Africash -- Confirmation de création de votre destinataire."
-						); 
-						$this->load->view('templates/c_template.php', $data); 
-						return;
-					}					
-				}
+				$this->_treat_recipient_create("c_");
 			}			
 			else if ( $onglet == "update" ) 
 			{
 				if ( $action == null )
 				{
 					$recipient_object	=	$this->user_model->get_recipient($recipient); 
+					$countries = $this->country_model->get_all_countries_receive_money();
 					$data 	  = array(
 						'error'	=>	"",
-						'recipient'	=>	$recipient_object
+						'recipient'	=>	$recipient_object,
+						'countries'	=>	$countries
 					); 
 					$content  = $this->load->view('user/c_recipient_update.php', $data , TRUE);
 					$data 	  = array(
@@ -684,16 +613,19 @@ class User extends CI_Controller {
 						array('required'	=>	'%s ne peut pas être vide.',				      
 					));	*/
 					$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
-						'trim|required|numeric',
+						'trim|required|numeric|callback_validate_phone_number',
 						array('required'	=>	'%s ne peut pas être vide.',				      
-						'numeric'		=>	'%s doit contenir que des chiffres.',				      
+						'numeric'		=>	'%s doit contenir que des chiffres.',
+						'validate_phone_number'			=>	'%s doit être du bon format.',
 					));
 					$recipient_object	=	$this->user_model->get_recipient($recipient); 
 					if ($this->form_validation->run() == FALSE)
 					{	
+						$countries = $this->country_model->get_all_countries_receive_money();
 						$data 	  = array(
 							'error'	=>	"",
-							'recipient'	=>	$recipient_object
+							'recipient'	=>	$recipient_object,
+							'countries'	=> 	$countries
 						); 
 						// Formulaire mal rempli
 						$content  = $this->load->view('user/c_recipient_update.php', $data, TRUE);
@@ -716,9 +648,11 @@ class User extends CI_Controller {
 						if ( $recipient_object->name == $name && $recipient_object->firstname == $firstname && 
 						$recipient_object->country == $country && $recipient_object->phone_number == $phone_number ) 
 						{
+							$countries = $this->country_model->get_all_countries_receive_money();
 							$data 	  = array(
 								'error'	=>	"update_error",
-								'recipient'	=>	$recipient_object
+								'recipient'	=>	$recipient_object,
+								'countries'	=> $countries
 							); 
 							// Formulaire mal rempli
 							$content  = $this->load->view('user/c_recipient_update.php', $data, TRUE);
@@ -733,10 +667,12 @@ class User extends CI_Controller {
 						{
 							if ( ($recipient_object->phone_number == $phone_number && $recipient_object->country == $country) || ($this->validate_phone_number_recipient($phone_number, $country) == FALSE))
 							{
+								$countries = $this->country_model->get_all_countries_receive_money();
 								$recipient	=	$this->user_model->get_recipient($recipient); 
 								$data 	  = array(
 									'error'	=>	"phone_already_use",
-									'recipient'	=>	$recipient
+									'recipient'	=>	$recipient,
+									'countries'	=>	$countries
 								); 
 								// Formulaire mal rempli
 								$content  = $this->load->view('user/c_recipient_update.php', $data, TRUE);
@@ -823,24 +759,33 @@ class User extends CI_Controller {
 		}
 	}
 
-
-
-	/*
-		Validation du numéro de téléphone. Un seul numéro par pays. 
-	*/
-	public function validate_phone_number($number)
+	public function validate_phone_number_no_use($number)
 	{
-		if ( $this->user_model->phone_number_already_user($number, $this->input->post('town')))
+		if ( $this->user_model->phone_number_already_user($number, $this->input->post('country')))
 		{
 			return FALSE; 
-		}else
-		{
+		}
+		else return TRUE;
+	}
+	
+
+	public function validate_phone_number($number)
+	{
+		$country	=	xss_clean($this->input->post('country', TRUE));
+		if ( $country == "") return FALSE; 
+		$regex		=	$this->country_model->get_country_regex($country);
+		$matches = null;
+		if (preg_match("/^" . $regex . "/", $number, $matches, PREG_OFFSET_CAPTURE, 0)) {
 			return TRUE; 
+		}
+		else{
+			return FALSE; 
 		}
 	}
 	
-	public function validate_phone_number_recipient($number, $country)
+	public function validate_phone_number_recipient($number)
 	{
+		$country	=	xss_clean($this->input->post('country', TRUE));
 		if ( $this->user_model->recipient_exists($this->session->userdata('user'), $number, $country))
 		{
 			return FALSE; 
@@ -890,20 +835,262 @@ class User extends CI_Controller {
 		$currency_sn	=	$this->country_model->get_country_currency_short_name($country);
 		echo $count->id . "&" . $count->phone_code . "&" . $currency . "&" . $currency_sn; 		
 	}
-	
+
+
 
 
 	public function amount_change()
 	{
 		$country_from	=	xss_clean($this->input->post('country_from'));
 		$country_to	=	xss_clean($this->input->post('country_to'));
-		$amount_st		=	xss_clean($this->input->post('amount'));
+		$amount_st	=	xss_clean($this->input->post('amount'));
+		$transfert_cost = 	$this->country_model->get_country_transfert_cost($country_to);
 		$change		=	$this->country_model->get_change(
 			$this->country_model->get_country_currency($country_from), $this->country_model->get_country_currency($country_to));	
-		$amount 	= 	(intval($change->amount) * intval($amount_st)); 	
+		$amount 	= 	((intval($change->amount) * intval($amount_st)) - (intval($transfert_cost))); 	
 		$cost		=	(round(intval($amount_st)/50)*2.50); 
 		$currency_sn	=	$this->country_model->get_country_currency_sign($country_from);
-		echo number_format($amount) . "&" . $cost  . "&" . $currency_sn . "&" . $change->amount;	
+		$currency_sn2	=	$this->country_model->get_country_currency_sign($country_to);
+		echo number_format($amount) . "&" . $cost  . "&" . $currency_sn . "&" . $change->amount 
+		. "&" . $transfert_cost . "&" . $currency_sn2;	
+	}
+	
+	private function _treat_recipient_create($prefix)
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('security');
+
+
+		$this->form_validation->set_rules('name', 'Le nom de famille', 'trim|required|min_length[2]',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+			'min_length'		=>	'%s doit contenir au moins %s caractères.'
+		));	
+		$this->form_validation->set_rules('firstname', 'Le prénom', 'trim|required|min_length[2]',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+			'min_length'		=>	'%s doit contenir au moins %s caractères.'
+		));
+		$this->form_validation->set_rules('country', 'Le pays d\'adresse', 'trim|required',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+			'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
+		));	
+/*				$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
+					array('required'	=>	'%s ne peut pas être vide.',				      
+				));	*/
+		$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
+			'trim|required|numeric|callback_validate_phone_number_recipient|callback_validate_phone_number',
+			array('required'			=>	'%s ne peut pas être vide.',
+				'numeric'				=>	'%s doit contenir que des chiffres.',
+				'validate_phone_number_recipient'	=>	'%s est déjà utilisé.',
+				'validate_phone_number'			=>	'%s doit être du bon format.',
+		));
+		if ($this->form_validation->run() == FALSE)
+		{
+			$countries	=	$this->country_model->get_all_countries_receive_money();
+			$data 	  = array(
+				'countries'	=>	$countries,
+				'error'	=>	"",
+			); 
+			// Formulaire mal rempli
+			$content  = $this->load->view("user/$prefix" . "recipient_create.php", $data, TRUE);
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- Inscrivez vous!"
+			); 
+			$this->load->view('templates/c_template.php', $data); 
+		}
+		else {
+			// Formulaire bien rempli
+			$name		=	xss_clean($this->input->post('name', TRUE));
+			$firstname	=	xss_clean($this->input->post('firstname', TRUE));
+			$country	=	xss_clean($this->input->post('country', TRUE));
+			$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
+					
+			$data 	=	array (
+				'customer'	=>	$this->session->userdata('user'),
+				'name'		=>	$name, 
+				'firstname'	=>	$firstname, 
+				'country'		=>	$country, 				
+				'phone_number'	=>	$phone_number
+			); 
+			//  création du recipient
+			$creation = $this->user_model->create_recipient($data);
+			if ( $creation == 0 ) 
+			{
+				// On ne peut pas créer le recipient, numéro déjà utilisé pour un autre recipient, ou transaction annulé
+				$data 	  = array(
+					'status'	=>	"error",
+				); 
+				$content  = $this->load->view('user/recipient_create_confirm.php', $data , TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- Confirmation de création de votre destinataire."
+				); 
+				$this->load->view('templates/c_template.php', $data); 
+				return;															
+			}	
+			else	
+			{
+				$recipient  = $creation;
+				// Le recipient a bien été enregistré
+				$data 	  = array(
+					'status'	=>	"success",
+				); 
+				if ( $prefix != "simulator_" ) {
+					$content  = $this->load->view('user/recipient_create_confirm.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Confirmation de création de votre destinataire."
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return;
+				}
+				else {
+			/*		$recipient_object = $this->user_model->get_recipient($recipient);
+					$content  = $this->load->view('user/simulator_transfert_create.php', 
+						array ('status'	=> '', 'recipient' => $recipient, 'recipient_object' => $recipient_object)
+						, TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- "
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+					return;
+/*					redirect('user/recipient/create/', 'location');*/
+					redirect("user/transfert/new/$recipient/");
+					return;
+				}
+			}					
+		}
+	}
+
+	private function _treat_registration($prefix_dest)
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('security');
+		
+		$email		=	xss_clean($this->input->post('email', TRUE));
+		$password	=	xss_clean($this->input->post('password', TRUE));
+		$password_conf	=	xss_clean($this->input->post('password_conf', TRUE));
+
+		$name		=	xss_clean($this->input->post('name', TRUE));
+		$firstname	=	xss_clean($this->input->post('firstname', TRUE));
+
+		$country	=	xss_clean($this->input->post('country', TRUE));
+		$address	=	xss_clean($this->input->post('address', TRUE));
+		$line2		=	xss_clean($this->input->post('address_line2', TRUE));
+		$town		=	xss_clean($this->input->post('town', TRUE));
+		$phone_number	=	xss_clean($this->input->post('phone_number', TRUE));
+
+		$this->form_validation->set_rules('email', 'L\'adresse email', 'trim|required|valid_email|is_unique[customer.email]', 
+			array('required'	=>	'%s ne peut pas être vide.',
+			      'is_unique'	=>	'%s que vous avez choisie est déjà utilisé',
+			      'valid_email'	=>	'%s doit être du bon format d\'email.'));
+		$this->form_validation->set_rules('password', 'Le mot de passe', 'trim|required|min_length[8]', 
+			array('required'	=>	'%s ne peut pas être vide.',
+			'min_length'		=>	'%s doit contenir au moins %s caractères.'
+		));
+		$this->form_validation->set_rules('password_conf', 'La confirmation du mot de passe', 'trim|matches[password]|required', 
+			array('matches'		=>	'Les deux mot de passe ne sont pas équivalent.',				      
+			'required'	=>	'%s ne peut pas être vide.',				      
+		));
+		$this->form_validation->set_rules('name', 'Le nom de famille', 'trim|required|min_length[2]',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+			'min_length'		=>	'%s doit contenir au moins %s caractères.'
+		));
+		$this->form_validation->set_rules('firstname', 'Le prénom', 'trim|required|min_length[2]',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+			'min_length'		=>	'%s doit contenir au moins %s caractères.'
+		));
+		$this->form_validation->set_rules('country', 'Le pays d\'adresse', 'trim|required',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+			'alpha_dash'		=>	'Vous devez choisir un pays d\'adresse.',				      
+		));
+		/*$this->form_validation->set_rules('town', 'La ville d\'adresse', 'trim|required',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+		));*/
+		$this->form_validation->set_rules('phone_number', 'Le numéro de téléphone', 
+			'trim|required|numeric|callback_validate_phone_number_no_use|callback_validate_phone_number',
+			array('required'			=>	'%s ne peut pas être vide.',				      
+			'numeric'				=>	'%s doit contenir que des chiffres.',				      
+			'validate_phone_number'			=>	'%s doit être du bon format.',
+			'validate_phone_number_no_use'		=>	'%s est déjà utilisé.',
+		));
+		$this->form_validation->set_rules('address', 'L\'adresse ', 'trim|required',
+			array('required'	=>	'%s ne peut pas être vide.',				      
+		));
+		if ($this->form_validation->run() == FALSE)
+		{
+			$countries = $this->country_model->get_all_countries_send_money();
+			$phone_code = ($country == "" ) ? "" : $this->country_model->get_country_code($country);
+			$content  = $this->load->view("user/$prefix_dest" . "registration.php", 
+			array('countries' => $countries, 'phone_code' => $phone_code), TRUE);
+			$data 	  = array(
+				'content'	=>	$content,
+				'title'		=>	"Africash -- Inscrivez vous!"
+			); 
+			$this->load->view('templates/nc_template.php', $data); 
+		}
+		else
+		{
+			$password	=	hash('sha512', $password);
+			// All data's correct
+			$data 	=	array (
+				'email'		=>	$email, 
+				'password'	=>	$password, 
+				'name'		=>	$name, 
+				'firstname'	=>	$firstname, 
+				'address'	=>	$address, 
+				'country'		=>	$country, 				
+				'phone_number'	=>	$phone_number
+			); 
+			if ( $this->user_model->create_user($data) == 0 ) 
+			{				
+				$data 	  = array(
+					'status'	=>	"error",
+				); 
+				$content  = $this->load->view('user/registration_confirm.php', $data , TRUE);
+				$data 	  = array(
+					'content'	=>	$content,
+					'title'		=>	"Africash -- Confirmation d'inscription"
+				); 
+				$this->load->view('templates/nc_template.php', $data); 
+				return;
+			}
+			else
+			{
+				$this->_create_session($email, $password);
+				$data 	  = array(
+					'status'	=>	"success",
+				); 
+				if ( $prefix_dest != "simulator_" ) {
+					$content  = $this->load->view('user/registration_confirm.php', $data , TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Confirmation d'inscription"
+					); 
+					$this->load->view('templates/nc_template.php', $data); 
+					return;
+				}
+				else {
+					
+					$countries	=	$this->country_model->get_all_countries_receive_money();
+					$data 	  = array(
+						'countries'	=>	$countries,
+						'error'	=>	"",
+					); 
+					// Formulaire mal rempli
+					$content  = $this->load->view('user/simulator_recipient_create.php', $data, TRUE);
+					$data 	  = array(
+						'content'	=>	$content,
+						'title'		=>	"Africash -- Inscrivez vous!"
+					); 
+					$this->load->view('templates/c_template.php', $data); 
+/*					redirect('user/recipient/create/', 'location');
+					return;*/
+				}
+			}
+		}
+		
 	}
 
 }

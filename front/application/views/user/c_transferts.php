@@ -52,9 +52,12 @@
 						$change         =       $this->country_model->get_change(
 				                        $transfert->transfert_currency, 
 							$transfert->receive_currency);
+						$transfert_cost = 	$this->country_model->
+										get_country_transfert_cost($transfert->receive_currency);
 						?>
 						<td>
-							<?php echo number_format(intval($transfert->amount)*$change->amount) . " " .
+							<?php echo number_format(
+								((intval($transfert->amount)*$change->amount)-$transfert_cost)) . " " .
                                                         $this->country_model->get_country_currency_sign($transfert->receive_currency);?>
 						</td>
 						<td>

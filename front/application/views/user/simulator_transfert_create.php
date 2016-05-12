@@ -1,3 +1,4 @@
+
 <br/><br/>
 <div class="container">
 	<div class="row">
@@ -31,7 +32,7 @@
 							$this->session->userdata('country')); ?>
 						</div>
       						<input type="text" class="form-control input-lg" id="amount" name="amount" 
-							value="<?php echo set_value('amount');?>">
+							value="<?php echo ($this->session->userdata('simulator_amount') == null ) ? set_value('amount') : $this->session->userdata('simulator_amount');?>">
       						<div class="input-group-addon btn-primary" style="color: white; ">
 							.00
 						</div>
@@ -64,8 +65,7 @@
 								<?php echo $this->country_model->get_country_currency_short_name(
 								$this->session->userdata('country')); ?>
 							</div>
-		      					<input type="text" class="form-control input-lg" id="amount" name="amount"
-								value="<?php echo (($this->session->userdata('simulator_amount') == null ) ? (set_value('amount')) : ($this->session->userdata('simulator_amount')));?>">
+		      					<input type="text" class="form-control input-lg" id="amount" name="amount">
 	      						<div class="input-group-addon btn-primary" style="color: white; ">
 								.00
 							</div>
@@ -171,39 +171,6 @@
 <?php echo $this->session->userdata('country'); ?>
 
 <script>
-$(document).ready(function(){
-        var amount      =       $("#amount").val();
-        var amount_int  =       parseInt(amount);
-        if ( isNaN(amount_int) && amount != "") {
-                alert("Veuillez choisir un nombre !");
-                $("#submit").attr('disabled', 'disabled'); 
-                return;
-        }
-        if ( amount == "" ) {
-                $("#submit").attr('disabled', 'disabled'); 
-                return ; 
-        }
-        if ( !isNaN(amount_int) && amount_int != 0 )
-        {
-                $.ajax({
-                        'type'  :       "POST",
-                        'url'   :       "<?php echo base_url() . "index.php/user/amount_change/" ; ?>",
-                        'data'  :       'country_from=' + <?php echo $this->session->userdata('country');?> + 
-				"&" + "country_to=" + <?php echo $recipient_object->country; ?> + "&amount=" + amount,
-                        'dataType' :    "text",
-                
-                        success : function (text, statut) {
-                                var res = text.split("&");
-                                $("#amount_received").attr('value', res[0]);
-                                $("#cost").attr('value', res[1]);
-                                $("#change").attr('value', res[3] );
-                                $("#submit").removeAttr('disabled');
-                        },
-                });
-	}
-});
-
-
 $('#amount').bind("keyup", function() {
         var amount      =       $("#amount").val();
         var amount_int  =       parseInt(amount);

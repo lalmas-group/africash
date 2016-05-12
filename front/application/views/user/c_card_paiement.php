@@ -152,7 +152,11 @@
 			} ?>
 
 			<br/><br/>
-			<button type="submit" class="btn btn-primary" style="width: 100%; ">Confirmer et payer 52,50 €(total_amount)</button>
+			<button type="submit" class="btn btn-primary" style="width: 100%; ">
+				Confirmer et payer <?php echo (($cost == 0) ? (intval($amount)+2.50) : ((intval($amount)+$cost))); ?>
+				 <?php echo $this->country_model->get_country_currency_sign($transfert->transfert_currency); ?>
+				 
+			</button>
 			<br/><br/>	
 			</form>
     		</div>
